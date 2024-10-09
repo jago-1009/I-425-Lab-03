@@ -1,0 +1,16 @@
+{
+    "require": {
+        "slim/slim": "3.*",
+        "illuminate/database": "5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Chatter\\": "src/Chatter/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
+}
