@@ -5,6 +5,7 @@ require __DIR__ . '/bootstrap.php';
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Chatter\Models\Movie;
+use Chatter\Models\Review;
 
 $app = new \Slim\App();
 
@@ -22,14 +23,15 @@ $app->get('/', function ($request, $response, $args) {
 });
 
 $app->get('/movies/{id}', function (Request $request, Response $response, $args) {
-    $movie = Movie::where('id', '=', $args['id'])->first();
+    $id = $args['id'];
+    $movie = Movie::find($id);
     $payload[$movie->id] = [
         'movieName' => $movie->movieName,
         'releaseDate' => $movie->releaseDate,
         'studioId' => $movie->studioId,
         'directorId' => $movie->directorId
     ];
-    return $response->withJson($payload);
+    return $response->withStatus(200)->withJson($payload);
 
 });
 $app->get('/movies', function ($request, $response, $args) {
@@ -46,7 +48,24 @@ $app->get('/movies', function ($request, $response, $args) {
             'directorId' => $movie->directorId
         ];
     }
-    return $response->withJson($movies);
+    return $response->withStatus(200)->withJson($movies);
+
+});
+
+$app->get('/movies/{id}/reviews', function ($request, $response, $args) {
+    $id = $args['id'];
+    $movie = new Movie();
+    $reviews = $movie->find($id)->reviews;
+    $payload = [];
+    foreach ($reviews as $review) {
+        $payload[$review->id] = [
+            "reviewer_id" => $review->reviewer_id,
+            "review"=>$review->review,
+            "movie_id" => $review->movie_id,
+            "created_at" => $review->created_at,
+        ];
+    }
+    return $response->withStatus(200)->withJson($payload);
 
 });
 $app->run();
