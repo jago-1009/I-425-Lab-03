@@ -56,12 +56,13 @@ $app->get('/movies/{id}/reviews', function ($request, $response, $args) {
     $id = $args['id'];
     $movie = new Movie();
     $reviews = $movie->find($id)->reviews;
+
     $payload = [];
     foreach ($reviews as $review) {
         $payload[$review->id] = [
-            "reviewer_id" => $review->reviewer_id,
+            "reviewer_id" => $review->reviewerId,
             "review"=>$review->review,
-            "movie_id" => $review->movie_id,
+            "movie_id" => $review->movieId,
             "created_at" => $review->created_at,
         ];
     }

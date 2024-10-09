@@ -11,8 +11,9 @@ class Reviewer extends Model
 
  public $timestamps = false;
 
+
  public function reviews()
  {
-     return $this->hasMany(Review::class,'reviewer_id');
+     return $this->hasMany(Review::class,'review_id');
  }
 }

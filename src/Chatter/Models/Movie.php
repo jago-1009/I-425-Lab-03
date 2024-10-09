@@ -8,6 +8,6 @@ class Movie extends Model
  public $timestamps = false;
 
     public function reviews() {
-        return $this->hasMany(Review::class, 'message_id');
+        return $this->hasMany(Review::class, 'id');
     }
 }
