@@ -4,11 +4,11 @@ require __DIR__ . '/bootstrap.php';
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Chatter\Models\Movie;
-use Chatter\Models\Review;
-use Chatter\Models\Director;
-use Chatter\Models\Genre;
-use Chatter\Models\Studio;
+use Movies\Models\Movie;
+use Movies\Models\Review;
+use Movies\Models\Director;
+use Movies\Models\Genre;
+use Movies\Models\Studio;
 
 $app = new \Slim\App();
 
@@ -18,18 +18,22 @@ $app->get('/', function ($request, $response, $args) {
             "movies" => [
                 "Get all movies" => "/movies",
                 "Get a single movie" => "/movies/{id}",
+                "Get reviews for a specific movie by movie" => "/movies/{id}/reviews",
             ],
             "directors" => [
                 "Get all directors" => "/directors",
                 "Get a single director" => "/directors/{id}",
+                "Get all movies by a specific director" => "/directors/{id}/movies"
             ],
             "genres" => [
                 "Get all genres" => "/genres",
                 "Get a single genre" => "/genres/{id}",
+                "Get all movies in a specific genre by genre" => "/genre/{id}/movies"
             ],
             "studios" => [
                 "Get all studios" => "/studios",
-                "Get a single studio" => "/studios/{id}"
+                "Get a single studio" => "/studios/{id}",
+                "Get all movies by a specific studio" => "/studios/{id}/movies"
             ],
         ]
     ];
