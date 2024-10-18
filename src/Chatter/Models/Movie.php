@@ -5,9 +5,13 @@ class Movie extends Model
 {
     protected $table = 'movies';
     protected $primaryKey = 'id';
- public $timestamps = false;
+
+    public $timestamps = false;
 
     public function reviews() {
         return $this->hasMany(Review::class, 'id');
     }
+
+
+
 }
