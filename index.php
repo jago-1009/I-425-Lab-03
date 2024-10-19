@@ -9,6 +9,7 @@ use Movies\Models\Review;
 use Movies\Models\Director;
 use Movies\Models\Genre;
 use Movies\Models\Studio;
+use Movies\Models\Reviewer;
 
 $app = new \Slim\App();
 
@@ -19,6 +20,15 @@ $app->get('/', function ($request, $response, $args) {
                 "Get all movies" => "/movies",
                 "Get a single movie" => "/movies/{id}",
                 "Get reviews for a specific movie by movie" => "/movies/{id}/reviews",
+            ],
+            "reviews" => [
+                "Get all reviews" => "/reviews",
+                "Get a single review" => "/reviews/{id}",
+            ],
+            "reviewers" => [
+                "Get all reviewers" => "/reviewers",
+                "Get a single reviewer" => "/reviewers/{id}",
+                "Get all reviews by specific reviewer" => "/reviewers/{id}/reviews",
             ],
             "directors" => [
                 "Get all directors" => "/directors",
@@ -87,6 +97,90 @@ $app->get('/movies/{id}/reviews', function ($request, $response, $args) {
     return $response->withStatus(200)->withJson($payload);
 });
 
+// GET REVIEWS
+
+// Get all reviews
+$app->get('/reviews', function ($request, $response, $args) {
+    $reviews = Review::all();
+    $payload = [];
+    foreach ($reviews as $review) {
+        $payload[$review->id] = [
+            'review' => $review->review,
+            'movieId' => $review->movieId,
+            'created_at' => $review->created_at,
+            'reviewerId' => $review->reviewerId,
+            'rating' => $review->rating,
+        ];
+    }
+    return $response->withStatus(200)->withJson($reviews);
+});
+
+// Get a specific review by ID
+$app->get('/reviews/{id}', function (Request $request, Response $response, $args) {
+    $id = $args['id'];
+    $review = Review::find($id);
+    $payload[$review->id] = [
+        'review' => $review->review,
+        'movieId' => $review->moiveId,
+        'created_at' => $review->created_at,
+        'reviewerId' => $review->reviewerId,
+        'rating' => $review->rating,
+    ];
+    return $response->withStatus(200)->withJson($payload);
+});
+
+// GET REVIEWERS
+
+// Get all reviewers
+$app->get('/reviewers', function ($request, $response, $args) {
+    $reviewers = Reviewer::all();
+    $payload = [];
+    foreach ($reviewers as $reviewer) {
+        $payload[$reviewer->id] = [
+            'id' => $reviewer->id,
+            'name' => $reviewer->name,
+            'created_at' => $reviewer->created_at,
+        ];
+    }
+    return $response->withStatus(200)->withJson($payload);
+});
+
+// Get a specific reviewer by ID
+$app->get('/reviewers/{id}', function (Request $request, Response $response, $args) {
+    $id = $args['id'];
+    $reviewer = Reviewer::find($id);
+    $payload[$reviewer->id] = [
+        'id' => $reviewer->id,
+        'name' => $reviewer->name,
+        'created_at' => $reviewer->created_at,
+    ];
+    return $response->withStatus(200)->withJson($payload);
+});
+
+// Get all reviews by specific reviewer
+$app->get('/reviewers/{id}/reviews', function (Request $request, Response $response, $args) {
+    $id = $args['id'];
+    $reviewer = Reviewer::find($id);
+
+    $reviews = $reviewer->reviews;
+
+    $payload = [];
+
+    foreach ($reviews as $review) {
+        $payload[$review->id] = [
+            'id' => $review->id,
+            'name' => $reviewer->name,
+            'review' => $review->review,
+            'movieId' => $review->movieId,
+            'created_at' => $review->created_at,
+            'reviewerId' => $review->reviewerId,
+            'rating' => $review->rating,
+        ];
+    }
+
+    return $response->withStatus(200)->withJson($payload);
+});
+
 // GET DIRECTORS FUNCTIONS
 
 // Get all directors
@@ -146,7 +240,7 @@ $app->get('/genres', function ($request, $response, $args) {
             'description' => $genre->description,
         ];
     }
-    return $response->withStatus(200)->withJson($genres);
+    return $response->withStatus(200)->withJson($payload);
 });
 
 // Get a specific genre by ID

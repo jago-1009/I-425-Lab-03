@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reviewer extends Model
 {
- protected $table = 'reviewers';
+ protected $table = 'reviewer';
  protected $primaryKey = 'id';
 
  public $timestamps = false;
 
-
- public function reviews()
- {
-     return $this->hasMany(Review::class,'review_id');
- }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'reviewerId');
+    }
 }

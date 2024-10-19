@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 04, 2024 at 01:37 AM
+-- Generation Time: Oct 19, 2024 at 02:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `group6_movies_db`
 --
+DROP DATABASE IF EXISTS `group6_movies_db`;
 CREATE DATABASE IF NOT EXISTS `group6_movies_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `group6_movies_db`;
 
@@ -130,30 +131,6 @@ INSERT INTO `movies_genres` (`movieId`, `genreId`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ratings`
---
-
-DROP TABLE IF EXISTS `ratings`;
-CREATE TABLE `ratings` (
-  `id` int(11) NOT NULL,
-  `rating` varchar(3) NOT NULL,
-  `ratingStar` varchar(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `ratings`
---
-
-INSERT INTO `ratings` (`id`, `rating`, `ratingStar`) VALUES
-(1, '1/5', '★'),
-(2, '2/5', '★★'),
-(3, '3/5', '★★★'),
-(4, '4/5', '★★★★'),
-(5, '5/5', '★★★★★');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `reviewer`
 --
 
@@ -188,14 +165,14 @@ CREATE TABLE `reviews` (
   `review` varchar(500) NOT NULL,
   `movieId` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `ratingId` int(11) NOT NULL
+  `rating` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `reviews`
 --
 
-INSERT INTO `reviews` (`id`, `reviewerId`, `review`, `movieId`, `created_at`, `ratingId`) VALUES
+INSERT INTO `reviews` (`id`, `reviewerId`, `review`, `movieId`, `created_at`, `rating`) VALUES
 (1, 5, 'Pulp Fiction is a masterpiece! The non-linear storytelling and unforgettable dialogue kept me on the edge of my seat. Tarantino’s ability to blend humor with violence is nothing short of genius. Each character is so distinct and memorable, especially Samuel L. Jackson as Jules. It’s a film that demands multiple viewings to catch all the nuances.', 1, '2024-10-05 13:36:21', 5),
 (2, 3, 'Jurassic Park was a childhood favorite of mine, and watching it again as an adult reminded me of its groundbreaking effects. The tension was palpable, especially during the T-Rex scenes. Spielberg created a sense of wonder and terror that’s hard to match. However, I felt some parts of the story could have been stronger, but overall, it’s a thrilling ride!', 2, '2024-10-05 13:36:21', 4),
 (3, 3, 'Lost in Translation is beautifully understated. The chemistry between Bill Murray and Scarlett Johansson is captivating, and I love how it captures the feeling of isolation in a foreign country. The cinematography is stunning, and the soundtrack is perfect. It’s a film that resonates with anyone who’s ever felt out of place. A true gem!', 3, '2024-10-05 13:36:21', 5),
@@ -259,12 +236,6 @@ ALTER TABLE `movies_genres`
   ADD KEY `fk_movie_intersection` (`movieId`);
 
 --
--- Indexes for table `ratings`
---
-ALTER TABLE `ratings`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `reviewer`
 --
 ALTER TABLE `reviewer`
@@ -276,8 +247,7 @@ ALTER TABLE `reviewer`
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_reviews_movies` (`reviewerId`),
-  ADD KEY `fk_movies_reviews` (`movieId`),
-  ADD KEY `fk_reviews_rating` (`ratingId`);
+  ADD KEY `fk_movies_reviews` (`movieId`);
 
 --
 -- Indexes for table `studios`
@@ -306,12 +276,6 @@ ALTER TABLE `genres`
 --
 ALTER TABLE `movies`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `ratings`
---
-ALTER TABLE `ratings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `reviewer`
@@ -354,7 +318,6 @@ ALTER TABLE `movies_genres`
 --
 ALTER TABLE `reviews`
   ADD CONSTRAINT `fk_movies_reviews` FOREIGN KEY (`movieId`) REFERENCES `movies` (`id`),
-  ADD CONSTRAINT `fk_reviews_rating` FOREIGN KEY (`ratingId`) REFERENCES `ratings` (`id`),
   ADD CONSTRAINT `fk_reviews_reviewer` FOREIGN KEY (`reviewerId`) REFERENCES `reviewer` (`id`);
 COMMIT;
 
