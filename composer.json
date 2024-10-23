@@ -5,7 +5,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Chatter\\": "src/Chatter/"
+            "Movies\\": "src/Movies/"
         }
     },
     "config": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Chatter\Models;
+namespace Movies\Models;
 use Illuminate\Database\Eloquent\Model;
 class Review extends Model
 {
@@ -10,10 +10,10 @@ class Review extends Model
 
     public function movie()
     {
-        return $this->belongsTo(Movie::class, 'movie_id');
+        return $this->belongsTo(Movie::class, 'movieId');
     }
     public function reviewer()
     {
-        return $this->belongsTo(Reviewer::class, 'reviewer_id');
+        return $this->belongsTo(Reviewer::class, 'reviewerId');
     }
 }
