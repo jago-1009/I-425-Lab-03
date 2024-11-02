@@ -8,6 +8,9 @@ class Review extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+    protected $fillable = ['reviewerId', 'review', 'movieId', 'created_at', 'rating'];
+
+
     public function movie()
     {
         return $this->belongsTo(Movie::class, 'movieId');

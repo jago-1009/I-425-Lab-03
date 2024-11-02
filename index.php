@@ -10,8 +10,15 @@ use Movies\Models\Director;
 use Movies\Models\Genre;
 use Movies\Models\Studio;
 use Movies\Models\Reviewer;
-
-$app = new \Slim\App();
+$configuration = [
+    'settings' => [
+        'displayErrorDetails' => true,  // Display detailed errors
+        'logErrors' => true,
+        'logErrorDetails' => true,
+    ],
+];
+$c = new \Slim\Container($configuration);
+$app = new \Slim\App($c);
 
 $app->get('/', function ($request, $response, $args) {
     $message = [
@@ -64,6 +71,7 @@ $app->get('/movies/{id}', function (Request $request, Response $response, $args)
     ];
     return $response->withStatus(200)->withJson($payload);
 });
+
 
 // Get all movies
 $app->get('/movies', function ($request, $response, $args) {
@@ -121,7 +129,7 @@ $app->get('/reviews/{id}', function (Request $request, Response $response, $args
     $review = Review::find($id);
     $payload[$review->id] = [
         'review' => $review->review,
-        'movieId' => $review->moiveId,
+        'movieId' => $review->movieId,
         'created_at' => $review->created_at,
         'reviewerId' => $review->reviewerId,
         'rating' => $review->rating,
@@ -316,4 +324,353 @@ $app->get('/studios/{id}/movies', function ($request, $response, $args) {
 });
 
 
+// POST METHODS
+$app->post('/movies', function (Request $request, Response $response, $args) {
+    $movie = new Movie();
+    $_movie_name = $request->getParsedBodyParam('movieName','');
+    $_release_date = $request->getParsedBodyParam('releaseDate','');
+    $_studio_id = $request->getParsedBodyParam('studioId','');
+    $_director_id = $request->getParsedBodyParam('directorId','');
+    $movie->movieName = $_movie_name;
+    $movie->releaseDate = $_release_date;
+    $movie->studioId = $_studio_id;
+    $movie -> directorId = $_director_id;
+    $movie->save();
+    if ($movie->id) {
+        $payload = ['movieId' => $movie->id,
+            'movie_uri' => '/movies/' . $movie->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    }
+    else {
+
+        return $response->withStatus(500);
+    }
+});
+
+$app->post('/directors', function (Request $request, Response $response, $args) {
+    $director = new Director();
+    $_name = $request->getParsedBodyParam('name', '');
+    $_bio = $request->getParsedBodyParam('bio', '');
+    $_birth_date = $request->getParsedBodyParam('birthDate', '');
+    $_death_date = $request->getParsedBodyParam('deathDate', '');
+
+    $director->name = $_name;
+    $director->bio = $_bio;
+    $director->birthDate = $_birth_date;
+    $director->deathDate = $_death_date;
+
+    $director->save();
+
+    if ($director->id) {
+        $payload = [
+            'directorId' => $director->id,
+            'director_uri' => '/directors/' . $director->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->post('/genres', function (Request $request, Response $response, $args) {
+    $genre = new Genre();
+    $_genre_name = $request->getParsedBodyParam('genreName', '');
+    $_description = $request->getParsedBodyParam('description', '');
+
+
+    $genre->genreName=$_genre_name;
+    $genre->description = $_description;
+
+    $genre->save();
+
+    if ($genre->id) {
+        $payload = [
+            'genreId' => $genre->id,
+            'genre_uri' => '/genres/' . $genre->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->post('/reviewers', function (Request $request, Response $response, $args) {
+    $reviewer = new Reviewer();
+    $_name = $request->getParsedBodyParam('name', '');;
+
+
+    $reviewer->name=$_name;
+    $reviewer->created_at = date('Y-m-d H:i:s');
+
+    $reviewer->save();
+
+    if ($reviewer->id) {
+        $payload = [
+            'reviewerId' => $reviewer->id,
+            'reviewer_uri' => '/reviewers/' . $reviewer->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->post('/movies/{id}/reviews', function (Request $request, Response $response, $args) {
+    $id = intval($args['id']);
+    $review = new Review();
+    $_reviewer_id = $request->getParsedBodyParam('reviewerId', '');
+    $_review = $request->getParsedBodyParam('review', '');
+    $_movie_id = var_export($id, true);
+    $_created_at = date('Y-m-d H:i:s');
+    $_rating = $request->getParsedBodyParam('rating', '');
+    $review->reviewerId = $_reviewer_id;
+    $review->review = $_review;
+    $review->movieId = $_movie_id;
+    $review->created_at = $_created_at;
+    $review->rating = $_rating;
+
+//echo $_movie_id;
+//die();
+    $review->save();
+
+    if ($review->id) {
+        $payload = [
+            'reviewId' => $review->id,
+            'review_uri' => '/reviews/' . $review->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->post('/studios', function (Request $request, Response $response, $args) {
+    $studio = new Studio();
+   $_name = $request->getParsedBodyParam('name', '');
+   $_description = $request->getParsedBodyParam('description', '');
+   $_founding_date = $request->getParsedBodyParam('foundingDate', '');
+    $studio->name = $_name;
+    $studio->description = $_description;
+    $studio->foundingDate = $_founding_date;
+
+    $studio->save();
+
+    if ($studio->id) {
+        $payload = [
+            'studioId' => $studio->id,
+            'studio_uri' => '/studios/' . $studio->id
+        ];
+        return $response->withStatus(201)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+// END POST METHODS
+
+
+//PATCH METHODS
+$app->patch('/movies/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $movie = Movie::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $movie->$field = $value;
+    }
+
+    $movie->save();
+
+    if ($movie->id) {
+        $payload = [
+            'movieId' => $movie->id,
+            'movieName' => $movie->movieName,
+            'releaseDate' => $movie->releaseDate,
+            'studioId' => $movie->studioId,
+            'directorId' => $movie->directorId,
+            'movie_uri' => '/movies/' . $movie->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->patch('/directors/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $director = Director::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $director->$field = $value;
+    }
+
+    $director->save();
+
+    if ($director->id) {
+        $payload = [
+            'id' => $director->id,
+            'name' => $director->name,
+            'bio' => $director->bio,
+            'birthDate' => $director->birthDate,
+            'deathDate' => $director->deathDate,
+            'director_uri' => '/directors/' . $director->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->patch('/genres/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $genre = Genre::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $genre->$field = $value;
+    }
+
+    $genre->save();
+
+    if ($genre->id) {
+        $payload = [
+            'id' => $genre->id,
+            'genreName' => $genre->genreName,
+            'description' => $genre->description,
+            'genre_uri' => '/genres/' . $genre->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->patch('/reviewers/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $reviewer = Reviewer::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $reviewer->$field = $value;
+    }
+
+    $reviewer->save();
+
+    if ($reviewer->id) {
+        $payload = [
+            'id' => $reviewer->id,
+            'name' => $reviewer->name,
+            'createdAt' => $reviewer->created_at,
+            'reviewers_uri' => '/reviewers/' . $reviewer->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->patch('/reviews/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $review = Review::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $review->$field = $value;
+    }
+
+    $review->save();
+
+    if ($review->id) {
+        $payload = [
+            'id' => $review->id,
+            'reviewerId' => $review->reviewerId,
+            'review' => $review->review,
+            'movieId' => $review->movieId,
+            'createdAt' => $review->created_at,
+            'rating' => $review->rating,
+            'review_uri' => '/reviews/' . $review->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+$app->patch('/studios/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $studio = Studio::findOrFail($id);
+    $params = $request->getParsedBody();
+
+    foreach ($params as $field => $value) {
+        $studio->$field = $value;
+    }
+
+    $studio->save();
+
+    if ($studio->id) {
+        $payload = [
+            'id' => $studio->id,
+            'name' => $studio->name,
+            'description' => $studio->description,
+            'foundingDate' => $studio->foundingDate,
+            'studios_uri' => '/studios/' . $studio->id
+        ];
+        return $response->withStatus(200)->withJson($payload);
+    } else {
+        return $response->withStatus(500);
+    }
+});
+//END OF PATCH METHODS
+
+
+//DELETE METHODS
+$app->delete('/movies/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $movie = Movie::find($id);
+    if ($movie->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("Movie '/movies/$id' has been deleted.");
+    }
+});
+$app->delete('/directors/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $director = Director::find($id);
+    if ($director->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("Director '/directors/$id' has been deleted.");
+    }
+});
+$app->delete('/genres/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $genre = Genre::find($id);
+    if ($genre->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("genre '/genres/$id' has been deleted.");
+    }
+});
+$app->delete('/reviewers/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $reviewer = Reviewer::find($id);
+    if ($reviewer->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("Reviewer '/reviewers/$id' has been deleted.");
+    }
+});
+$app->delete('/reviews/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $review = Review::find($id);
+    if ($review->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("Review '/reviews/$id' has been deleted.");
+    }
+});
+$app->delete('/studios/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $studio = Studio::find($id);
+    if ($studio->exists) {
+        return $response->withStatus(500);
+    } else {
+        return $response->withStatus(204)->getBody()->write("Studio '/studios/$id' has been deleted.");
+    }
+});
+
+
+//END OF DELETE METHODS
 $app->run();

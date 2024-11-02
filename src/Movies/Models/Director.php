@@ -8,7 +8,7 @@ class Director extends Model
     protected $table = 'directors';
     protected $primaryKey = 'id';
 
-    //public $timestamps = false;
+    public $timestamps = false;
 
     public function movies()
     {
