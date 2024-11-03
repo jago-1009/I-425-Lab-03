@@ -194,6 +194,31 @@ $app->get('/reviewers/{id}/reviews', function (Request $request, Response $respo
 // Get all directors
 $app->get('/directors', function ($request, $response, $args) {
     $directors = Director::all();
+    $page = $request->getQueryParams()['page'] ?? 1;
+    $perPage = $request->getQueryParams()['perPage'] ?? 10;
+
+    //Sort
+    $sortColumn = $request->getQueryParams()['sort'] ?? 'id';
+    $sortOrder = $request->getQueryParams()['order'] ?? 'ASC';
+    $validSortColumns = ['id', 'name', 'birthdate'];
+    if(!in_array($sortColumn, $validSortColumns)) {
+        $sortColumn = 'id';
+    }
+
+    $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
+
+    //Offset
+    $offset = ($page - 1) * $perPage;
+
+    //Fetch w/ pagination & sort
+    $directors = Director::orderBy($sortColumn, $sortOrder)
+        ->limit($perPage)
+        ->offset($offset)
+        ->get();
+
+    //count
+    $totalDirectors = Director::count();
+
     $payload = [];
     foreach ($directors as $director) {
         $payload[$director->id] = [
@@ -203,6 +228,18 @@ $app->get('/directors', function ($request, $response, $args) {
             'deathDate' => $director->deathDate,
         ];
     }
+
+    //pagination data
+    $responsePayload = [
+        'data' => $payload,
+        'pagination' => [
+            'total' => $totalDirectors,
+            'page' => (int)$page,
+            'perPage' => (int)$perPage,
+            'lastPage' => ceil($totalDirectors / $perPage),
+        ]
+    ];
+
     return $response->withStatus(200)->withJson($payload);
 });
 
