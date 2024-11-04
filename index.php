@@ -23,41 +23,118 @@ $app = new \Slim\App($c);
 $app->get('/', function ($request, $response, $args) {
     $message = [
         "endpoints" => [
-            "movies" => [
+            "movies (Added pagination and sorting functionality along with search)" => [
                 "Get all movies" => "/movies",
                 "Get a single movie" => "/movies/{id}",
                 "Get reviews for a specific movie by movie" => "/movies/{id}/reviews",
+                "Add a new movie" => "/movies [POST]",
+                "Update a movie" => "/movies/{id} [PATCH]",
+                "Delete a movie" => "/movies/{id} [DELETE]",
             ],
-            "reviews" => [
-                "Get all reviews" => "/reviews",
-                "Get a single review" => "/reviews/{id}",
-            ],
-            "reviewers" => [
-                "Get all reviewers" => "/reviewers",
-                "Get a single reviewer" => "/reviewers/{id}",
-                "Get all reviews by specific reviewer" => "/reviewers/{id}/reviews",
-            ],
-            "directors" => [
+            "directors (Added search functionality)" => [
                 "Get all directors" => "/directors",
                 "Get a single director" => "/directors/{id}",
-                "Get all movies by a specific director" => "/directors/{id}/movies"
+                "Get all movies by a specific director" => "/directors/{id}/movies",
+                "Add a new director" => "/directors [POST]",
+                "Update a director" => "/directors/{id} [PATCH]",
+                "Delete a director" => "/directors/{id} [DELETE]",
             ],
             "genres" => [
                 "Get all genres" => "/genres",
                 "Get a single genre" => "/genres/{id}",
-                "Get all movies in a specific genre by genre" => "/genre/{id}/movies"
+                "Get all movies in a specific genre by genre" => "/genre/{id}/movies",
+                "Add a new genre" => "/genres [POST]",
+                "Update a genre" => "/genres/{id} [PATCH]",
+                "Delete a genre" => "/genres/{id} [DELETE]",
             ],
             "studios" => [
                 "Get all studios" => "/studios",
                 "Get a single studio" => "/studios/{id}",
-                "Get all movies by a specific studio" => "/studios/{id}/movies"
+                "Get all movies by a specific studio" => "/studios/{id}/movies",
+                "Add a new studio" => "/studios [POST]",
+                "Update a studio" => "/studios/{id} [PATCH]",
+                "Delete a studio" => "/studios/{id} [DELETE]",
+            ],
+            "reviews" => [
+                "Get all reviews" => "/reviews",
+                "Get a single review" => "/reviews/{id}",
+                "Add a new review to a movie" => "/movies/{id}/reviews [POST]",
+                "Update a review" => "/reviews/{id} [PATCH]",
+                "Delete a review" => "/reviews/{id} [DELETE]",
+            ],
+            "reviewers" => [
+                "Get all reviewers" => "/reviewers",
+                "Get a single reviewer" => "/reviewers/{id}",
+                "Get all reviews by a specific reviewer" => "/reviewers/{id}/reviews",
+                "Add a new reviewer" => "/reviewers [POST]",
+                "Update a reviewer" => "/reviewers/{id} [PATCH]",
+                "Delete a reviewer" => "/reviewers/{id} [DELETE]",
             ],
         ]
     ];
+
     return $response->withJson($message);
 });
 
 // GET MOVIES FUNCTIONS
+
+// Get all movies (Added pagination and search)
+$app->get('/movies', function ($request, $response, $args) {
+    $count = Movie::count();
+    $params = $request->getQueryParams();
+
+    $limit  = isset($params['limit']) ? (int)$params['limit'] : 3;
+    $offset = isset($params['offset']) ? (int)$params['offset'] : 0;
+
+    $term = isset($params['q']) ? $params['q'] : null;
+
+    if (!is_null($term)) {
+        $movies = Movie::searchMovies($term);
+        $payload_final = [];
+        foreach ($movies as $_movie) {
+            $payload_final[$_movie->id] = [
+                'movieName'   => $_movie->movieName,
+                'releaseDate' => $_movie->releaseDate,
+                'studioId'    => $_movie->studioId,
+                'directorId'  => $_movie->directorId
+            ];
+        }
+    } else {
+        $links = Movie::getLinks($request, $limit, $offset);
+
+        $sort_key_array = Movie::getSortKeys($request);
+
+        $query = Movie::skip($offset)->take($limit);
+
+        foreach ($sort_key_array as $column => $direction) {
+            $query->orderBy($column, $direction);
+        }
+
+        $movies = $query->get();
+
+        $payload = [];
+        foreach ($movies as $_movie) {
+            $payload[$_movie->id] = [
+                'movieName'   => $_movie->movieName,
+                'releaseDate' => $_movie->releaseDate,
+                'studioId'    => $_movie->studioId,
+                'directorId'  => $_movie->directorId
+            ];
+        }
+
+        $payload_final = [
+            'totalCount' => $count,
+            'limit'      => $limit,
+            'offset'     => $offset,
+            'links'      => $links,
+            'sort'       => $sort_key_array,
+            'data'       => $payload
+        ];
+    }
+
+    return $response->withStatus(200)->withJson($payload_final);
+});
+
 
 // Get a specific movie by ID
 $app->get('/movies/{id}', function (Request $request, Response $response, $args) {
@@ -70,22 +147,6 @@ $app->get('/movies/{id}', function (Request $request, Response $response, $args)
         'directorId' => $movie->directorId
     ];
     return $response->withStatus(200)->withJson($payload);
-});
-
-
-// Get all movies
-$app->get('/movies', function ($request, $response, $args) {
-    $movies = Movie::all();
-    $payload = [];
-    foreach ($movies as $movie) {
-        $payload[$movie->id] = [
-            'movieName' => $movie->movieName,
-            'releaseDate' => $movie->releaseDate,
-            'studioId' => $movie->studioId,
-            'directorId' => $movie->directorId
-        ];
-    }
-    return $response->withStatus(200)->withJson($movies);
 });
 
 // Get reviews for a specific movie by movie ID
@@ -191,20 +252,38 @@ $app->get('/reviewers/{id}/reviews', function (Request $request, Response $respo
 
 // GET DIRECTORS FUNCTIONS
 
-// Get all directors
+// Get all directors (Added search functionality
 $app->get('/directors', function ($request, $response, $args) {
-    $directors = Director::all();
-    $payload = [];
-    foreach ($directors as $director) {
-        $payload[$director->id] = [
-            'name' => $director->name,
-            'bio' => $director->bio,
-            'birthDate' => $director->birthDate,
-            'deathDate' => $director->deathDate,
-        ];
+    $params = $request->getQueryParams();
+    $term = isset($params['q']) ? $params['q'] : null;
+
+    if (!is_null($term)) {
+        $directors = Director::searchDirectors($term);
+        $payload = [];
+        foreach ($directors as $_director) {
+            $payload[$_director->id] = [
+                'name'       => $_director->name,
+                'bio'        => $_director->bio,
+                'birthDate'  => $_director->birthDate,
+                'deathDate'  => $_director->deathDate
+            ];
+        }
+    } else {
+        $directors = Director::all();
+        $payload = [];
+        foreach ($directors as $_director) {
+            $payload[$_director->id] = [
+                'name'       => $_director->name,
+                'bio'        => $_director->bio,
+                'birthDate'  => $_director->birthDate,
+                'deathDate'  => $_director->deathDate
+            ];
+        }
     }
+
     return $response->withStatus(200)->withJson($payload);
 });
+
 
 // Get a specific director by ID
 $app->get('/directors/{id}', function ($request, $response, $args) {
@@ -619,6 +698,7 @@ $app->patch('/studios/{id}', function ($request, $response, $args) {
 $app->delete('/movies/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $movie = Movie::find($id);
+    $movie->delete();
     if ($movie->exists) {
         return $response->withStatus(500);
     } else {
@@ -628,6 +708,7 @@ $app->delete('/movies/{id}', function ($request, $response, $args) {
 $app->delete('/directors/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $director = Director::find($id);
+    $director->delete();
     if ($director->exists) {
         return $response->withStatus(500);
     } else {
@@ -637,6 +718,7 @@ $app->delete('/directors/{id}', function ($request, $response, $args) {
 $app->delete('/genres/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $genre = Genre::find($id);
+    $genre->delete();
     if ($genre->exists) {
         return $response->withStatus(500);
     } else {
@@ -646,6 +728,7 @@ $app->delete('/genres/{id}', function ($request, $response, $args) {
 $app->delete('/reviewers/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $reviewer = Reviewer::find($id);
+    $reviewer->delete();
     if ($reviewer->exists) {
         return $response->withStatus(500);
     } else {
@@ -655,6 +738,7 @@ $app->delete('/reviewers/{id}', function ($request, $response, $args) {
 $app->delete('/reviews/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $review = Review::find($id);
+    $review->delete();
     if ($review->exists) {
         return $response->withStatus(500);
     } else {
@@ -664,6 +748,7 @@ $app->delete('/reviews/{id}', function ($request, $response, $args) {
 $app->delete('/studios/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $studio = Studio::find($id);
+    $studio->delete();
     if ($studio->exists) {
         return $response->withStatus(500);
     } else {

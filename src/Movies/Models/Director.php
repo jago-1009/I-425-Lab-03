@@ -14,4 +14,15 @@ class Director extends Model
     {
         return $this->hasMany(Movie::class, 'directorId');
     }
+
+    public static function searchDirectors($terms)
+    {
+        if (is_numeric($terms)) {
+            $query = self::where('id', "like", "%$terms%");
+        } else {
+            $query = self::where('name', 'like', "%$terms%")->orWhere('bio', 'like', "%$terms%")->orWhere('birthDate', 'like', "%$terms%")->orWhere('deathDate', 'like', "%$terms%");
+        }
+        $results = $query->get();
+        return $results;
+    }
 }
