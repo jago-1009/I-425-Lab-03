@@ -250,112 +250,15 @@ $app->get('/reviewers/{id}/reviews', function (Request $request, Response $respo
     return $response->withStatus(200)->withJson($payload);
 });
 
-// GET DIRECTORS FUNCTIONS
 
-// Get all directors (Added search functionality
-$app->get('/directors', function ($request, $response, $args) {
-    $params = $request->getQueryParams();
-    $term = isset($params['q']) ? $params['q'] : null;
-
-    if (!is_null($term)) {
-        $directors = Director::searchDirectors($term);
-        $payload = [];
-        foreach ($directors as $_director) {
-            $payload[$_director->id] = [
-                'name'       => $_director->name,
-                'bio'        => $_director->bio,
-                'birthDate'  => $_director->birthDate,
-                'deathDate'  => $_director->deathDate
-            ];
-        }
-    } else {
-        $directors = Director::all();
-        $payload = [];
-        foreach ($directors as $_director) {
-            $payload[$_director->id] = [
-                'name'       => $_director->name,
-                'bio'        => $_director->bio,
-                'birthDate'  => $_director->birthDate,
-                'deathDate'  => $_director->deathDate
-            ];
-        }
-    }
-
-    return $response->withStatus(200)->withJson($payload);
-});
-
-
-// Get a specific director by ID
-$app->get('/directors/{id}', function ($request, $response, $args) {
-    $id = $args['id'];
-    $director = Director::find($id);
-    $payload[$director->id] = [
-        'name' => $director->name,
-        'bio' => $director->bio,
-        'birthDate' => $director->birthDate,
-        'deathDate' => $director->deathDate
-    ];
-    return $response->withStatus(200)->withJson($payload);
-});
-
-// Get all movies by a specific director ID
-$app->get('/directors/{id}/movies', function ($request, $response, $args) {
-    $id = $args['id'];
-    $director = Director::find($id);
-    $movies = $director->movies;
-    $payload = [];
-    foreach ($movies as $movie) {
-        $payload[$movie->id] = [
-            'director' => $director->name,
-            'movieName' => $movie->movieName,
-            'releaseDate' => $movie->releaseDate,
-            'studioId' => $movie->studioId,
-        ];
-    }
-    return $response->withStatus(200)->withJson($payload);
-});
 
 // GET GENRES FUNCTIONS
 
-// Get all genres
-$app->get('/genres', function ($request, $response, $args) {
-    $genres = Genre::all();
-    $payload = [];
-    foreach ($genres as $genre) {
-        $payload[$genre->id] = [
-            'name' => $genre->genreName,
-            'description' => $genre->description,
-        ];
-    }
-    return $response->withStatus(200)->withJson($payload);
-});
 
-// Get a specific genre by ID
-$app->get('/genres/{id}', function ($request, $response, $args) {
-    $id = $args['id'];
-    $genre = Genre::find($id);
-    $payload[$genre->id] = [
-        'name' => $genre->genreName,
-        'description' => $genre->description,
-    ];
-    return $response->withStatus(200)->withJson($payload);
-});
 
-// Get all movies in a specific genre by genre ID
-$app->get('/genres/{id}/movies', function ($request, $response, $args) {
-    $id = $args['id'];
-    $genre = Genre::find($id);
-    $movies = $genre->movies;
-    $payload = [];
-    foreach ($movies as $movie) {
-        $payload[] = [
-            'genre' => $genre->genreName,
-            'movieName' => $movie->movieName,
-            'releaseDate' => $movie->releaseDate
-        ];
-    }
-    return $response->withStatus(200)->withJson($payload);
-});
+
+
+
 
 // GET STUDIOS FUNCTIONS
 
@@ -427,30 +330,7 @@ $app->post('/movies', function (Request $request, Response $response, $args) {
     }
 });
 
-$app->post('/directors', function (Request $request, Response $response, $args) {
-    $director = new Director();
-    $_name = $request->getParsedBodyParam('name', '');
-    $_bio = $request->getParsedBodyParam('bio', '');
-    $_birth_date = $request->getParsedBodyParam('birthDate', '');
-    $_death_date = $request->getParsedBodyParam('deathDate', '');
 
-    $director->name = $_name;
-    $director->bio = $_bio;
-    $director->birthDate = $_birth_date;
-    $director->deathDate = $_death_date;
-
-    $director->save();
-
-    if ($director->id) {
-        $payload = [
-            'directorId' => $director->id,
-            'director_uri' => '/directors/' . $director->id
-        ];
-        return $response->withStatus(201)->withJson($payload);
-    } else {
-        return $response->withStatus(500);
-    }
-});
 $app->post('/genres', function (Request $request, Response $response, $args) {
     $genre = new Genre();
     $_genre_name = $request->getParsedBodyParam('genreName', '');
@@ -570,31 +450,7 @@ $app->patch('/movies/{id}', function ($request, $response, $args) {
         return $response->withStatus(500);
     }
 });
-$app->patch('/directors/{id}', function ($request, $response, $args) {
-    $id = $args['id'];
-    $director = Director::findOrFail($id);
-    $params = $request->getParsedBody();
 
-    foreach ($params as $field => $value) {
-        $director->$field = $value;
-    }
-
-    $director->save();
-
-    if ($director->id) {
-        $payload = [
-            'id' => $director->id,
-            'name' => $director->name,
-            'bio' => $director->bio,
-            'birthDate' => $director->birthDate,
-            'deathDate' => $director->deathDate,
-            'director_uri' => '/directors/' . $director->id
-        ];
-        return $response->withStatus(200)->withJson($payload);
-    } else {
-        return $response->withStatus(500);
-    }
-});
 $app->patch('/genres/{id}', function ($request, $response, $args) {
     $id = $args['id'];
     $genre = Genre::findOrFail($id);
