@@ -4,6 +4,7 @@ namespace Movies\Controllers;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Movies\Models\Genre;
+use Movies\Validations\Validator;
 class GenreController
 {
     public function index(Request $request, Response $response, $args) {
@@ -26,6 +27,14 @@ class GenreController
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
     public function create(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $genre = Genre::createGenre($request);    
         if ($genre->id) {
             $payload = [
@@ -38,6 +47,14 @@ class GenreController
         }
     }
     public function update(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Genre::getGenre($id);
         $params = $request->getParsedBody();
@@ -55,6 +72,14 @@ class GenreController
         }
     }
     public function delete(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Genre::getGenre($id);
         if ($entry) {

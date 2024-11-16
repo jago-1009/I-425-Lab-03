@@ -19,7 +19,7 @@ class Review extends Model
     {
         return $this->belongsTo(Reviewer::class, 'reviewerId');
     }
-    public function getAllReviews() {
+    public static function getAllReviews() {
         $reviews = Review::all();
         $payload = [];
         foreach ($reviews as $review) {
@@ -33,7 +33,7 @@ class Review extends Model
         }
         return $payload;
     }
-    public function getReview($id) {
+    public static function getReview($id) {
         $review = Review::find($id);
         $payload[$review->id] = [
             'review' => $review->review,
@@ -44,7 +44,7 @@ class Review extends Model
         ];
         return $payload;
     }
-    public function createReview($request) {
+    public static function createReview($request) {
         $review = new Review();
         $review->reviewerId = $request->getParsedBodyParam('reviewerId', '');
         $review->review = $request->getParsedBodyParam('review', '');
@@ -56,7 +56,7 @@ class Review extends Model
             'status' => 'successful'
         ];
     }
-    public function updateReview($id, $params) {
+    public static function updateReview($id, $params) {
         $review = Review::find($id);
         foreach ($params as $field => $value) {
             $review->$field = $value;
@@ -66,7 +66,7 @@ class Review extends Model
             'status' => 'successful'
         ];
     }
-    public function deleteReview($id) {
+    public static function deleteReview($id) {
         $review = Review::find($id);
         $review->delete();
         return [

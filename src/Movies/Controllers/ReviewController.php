@@ -5,17 +5,18 @@ namespace Movies\Controllers;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Movies\Models\Review;
+use Movies\Validations\Validator;
 
 class ReviewController
 {
-    public function getReviews(Request $request, Response $response, $args)
+    public function index(Request $request, Response $response, $args)
     {
         $results = Review::getAllReviews();
         $code = array_key_exists('status', $results) ? 500 : 200;
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
 
-    public function getReview(Request $request, Response $response, $args)
+    public function view(Request $request, Response $response, $args)
     {
         $id = $args['id'];
         $results = Review::getReview($id);
@@ -23,8 +24,16 @@ class ReviewController
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
 
-    public function addReview(Request $request, Response $response, $args)
+    public function create(Request $request, Response $response, $args)
     {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $review = Review::createReview($request);
         if ($review->id) {
             $payload = [
@@ -37,8 +46,16 @@ class ReviewController
         }
     }
 
-    public function updateReview(Request $request, Response $response, $args)
+    public function update(Request $request, Response $response, $args)
     {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $review = Review::updateReview($id, $request);
         if ($review->id) {
@@ -52,8 +69,16 @@ class ReviewController
         }
     }
 
-    public function deleteReview(Request $request, Response $response, $args)
+    public function delete(Request $request, Response $response, $args)
     {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Review::getReview($id);
         if ($entry) {

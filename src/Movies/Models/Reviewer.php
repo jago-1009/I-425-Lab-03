@@ -57,4 +57,9 @@ class Reviewer extends Model
             'status' => 'successful'
         ];
     }
+    public function getReviews($id) {
+        $reviewer = Reviewer::find($id);
+        return $reviewer->reviews()->get()->toArray();
+    }
+    
 }

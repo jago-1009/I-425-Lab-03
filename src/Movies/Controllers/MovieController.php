@@ -3,11 +3,12 @@ namespace Movies\Controllers;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Movies\Models\Movie;
+use Movies\Validations\Validator;
 
 
 class MovieController {
     public function index(Request $request, Response $response) {
-        $results = Movie::getAllMovies();
+        $results = Movie::getAllMovies($request);
         $code = array_key_exists('status', $results) ? 500 : 200;
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
@@ -24,6 +25,14 @@ class MovieController {
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
     public function create(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $movie = Movie::createMovie($request);
         if ($movie->id) {
             $payload = [
@@ -36,6 +45,14 @@ class MovieController {
         }
     }
     public function update(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Movie::getMovie($id);
         $params = $request->getParsedBody();
@@ -55,6 +72,14 @@ class MovieController {
         }
     }
     public function delete(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Movie::getMovie($id);
         if ($entry) {

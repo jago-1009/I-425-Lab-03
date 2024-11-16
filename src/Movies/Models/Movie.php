@@ -78,19 +78,59 @@ class Movie extends Model
         return $sort_key_array;
     }
 
-    public static function getAllMovies() {
-        $movies = self::all();
-        $payload = [];
-        foreach ($movies as $movie) {
-            $payload[$movie->id] = [
-                'movieName' => $movie->movieName,
-                'releaseDate' => $movie->releaseDate,
-                'studioId' => $movie->studioId,
-                'directorId' => $movie->directorId,
-                'status' => 'successful'
+    public static function getAllMovies($request) {
+        $count = Movie::count();
+        $params = $request->getQueryParams();
+    
+        $limit  = isset($params['limit']) ? (int)$params['limit'] : 3;
+        $offset = isset($params['offset']) ? (int)$params['offset'] : 0;
+    
+        $term = isset($params['q']) ? $params['q'] : null;
+    
+        if (!is_null($term)) {
+            $movies = Movie::searchMovies($term);
+            $payload_final = [];
+            foreach ($movies as $_movie) {
+                $payload_final[$_movie->id] = [
+                    'movieName'   => $_movie->movieName,
+                    'releaseDate' => $_movie->releaseDate,
+                    'studioId'    => $_movie->studioId,
+                    'directorId'  => $_movie->directorId
+                ];
+            }
+        } else {
+            $links = Movie::getLinks($request, $limit, $offset);
+    
+            $sort_key_array = Movie::getSortKeys($request);
+    
+            $query = Movie::skip($offset)->take($limit);
+    
+            foreach ($sort_key_array as $column => $direction) {
+                $query->orderBy($column, $direction);
+            }
+    
+            $movies = $query->get();
+    
+            $payload = [];
+            foreach ($movies as $_movie) {
+                $payload[$_movie->id] = [
+                    'movieName'   => $_movie->movieName,
+                    'releaseDate' => $_movie->releaseDate,
+                    'studioId'    => $_movie->studioId,
+                    'directorId'  => $_movie->directorId
+                ];
+            }
+    
+            $payload_final = [
+                'totalCount' => $count,
+                'limit'      => $limit,
+                'offset'     => $offset,
+                'links'      => $links,
+                'sort'       => $sort_key_array,
+                'data'       => $payload
             ];
         }
-        return $payload;
+        return $payload_final;
     }
     public static function getMovie($id) {
         $movie = self::find($id);

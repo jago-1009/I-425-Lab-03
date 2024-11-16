@@ -4,6 +4,7 @@ namespace Movies\Controllers;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Movies\Models\Director;
+use Movies\Validations\Validator;
 class DirectorController
 {
     // Get all directors (Added search functionality
@@ -30,6 +31,14 @@ class DirectorController
         return $response->withStatus(200)->withJson($results);
     }
     public function create(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $director = Director::createDirector($request);
         if ($director->id) {
             $payload = [
@@ -42,6 +51,14 @@ class DirectorController
         }
     }
     public function update(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Director::getDirector($id);
         $params = $request->getParsedBody();
@@ -61,6 +78,14 @@ class DirectorController
         }
     }
     public function delete(Request $request, Response $response, $args) {
+        $validation = Validator::validateUser($request);
+        if (!$validation) {
+            $results = [
+                'status' => 'failed',
+                'errors' => Validator::getErrors()
+            ];
+            return $response->withStatus(500)->withJson($results);
+        }
         $id = $args['id'];
         $entry = Director::getDirector($id);
         if ($entry) {

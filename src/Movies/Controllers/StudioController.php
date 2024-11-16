@@ -1,36 +1,52 @@
-<?php
-
+<?php 
 namespace Movies\Controllers;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Movies\Models\Reviewer;
+use Movies\Models\Studio;
 use Movies\Validations\Validator;
 
-class ReviewerController
+class StudioController
 {
-    public function index(Request $request, Response $response, $args)
+    public function index(Request $request, Response $response)
     {
-        $results = Reviewer::getAllReviewers();
-        $code = array_key_exists('status', $results) ? 500 : 200;
-        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
+        $studios = Studio::all();
+        
+        
+        return $response->withJson($studios);
     }
 
     public function view(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $results = Reviewer::getReviewer($id);
-        $code = array_key_exists('status', $results) ? 500 : 200;
-        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
-    }
-    public function getReviews(Request $request, Response $response, $args) {
-        $id = $args['id'];
-        $results = Reviewer::getReviews($id);
-        $code = array_key_exists('status', $results) ? 500 : 200;
-        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
+        $studio = Studio::getStudio($id);
+        if (!$studio) {
+            return $response->withStatus(404);
+        }
+       
+        return $response->withJson($studio);
     }
 
-    public function create(Request $request, Response $response, $args)
+    public function viewMovie(Request $request, Response $response, $args)
+    {
+        $id = $args['id'];
+        $studio = Studio::getStudio($id);
+        if (!$studio) {
+            return $response->withStatus(404);
+        }
+        $movies = $studio->movies;
+        $result = [];
+        foreach ($movies as $movie) {
+            $result[] = [
+                'id' => $movie->id,
+                'movieName' => $movie->movieName,
+                'movie_uri' => '/movies/' . $movie->id
+            ];
+        }
+        return $response->withJson($result);
+    }
+
+    public function create(Request $request, Response $response)
     {
         $validation = Validator::validateUser($request);
         if (!$validation) {
@@ -40,11 +56,13 @@ class ReviewerController
             ];
             return $response->withStatus(500)->withJson($results);
         }
-        $reviewer = Reviewer::createReviewer($request);
-        if ($reviewer->id) {
+        $params = $request->getParsedBody();
+        $studio = Studio::createStudio($params);
+        if ($studio->id) {
             $payload = [
-                'reviewerId' => $reviewer->id,
-                'reviewer_uri' => '/reviewers/' . $reviewer->id
+                'id' => $studio->id,
+                'studioName' => $studio->studioName,
+                'studio_uri' => '/studios/' . $studio->id
             ];
             return $response->withStatus(201)->withJson($payload);
         } else {
@@ -63,14 +81,14 @@ class ReviewerController
             return $response->withStatus(500)->withJson($results);
         }
         $id = $args['id'];
-        $entry = Reviewer::find($id);
+        $entry = Studio::getStudio($id);
         $params = $request->getParsedBody();
-        $reviewer = Reviewer::updateReviewer($entry, $params);
-        if ($reviewer->id) {
+        $studio = Studio::updateStudio($entry, $params);
+        if ($studio->id) {
             $payload = [
-                'id' => $reviewer->id,
-                'name' => $reviewer->name,
-                'created_at' => $reviewer->created_at,
+                'id' => $studio->id,
+                'studioName' => $studio->studioName,
+                'studio_uri' => '/studios/' . $studio->id
             ];
             return $response->withStatus(200)->withJson($payload);
         } else {
@@ -89,13 +107,15 @@ class ReviewerController
             return $response->withStatus(500)->withJson($results);
         }
         $id = $args['id'];
-        $reviewer = Reviewer::find($id);
-        if ($reviewer) {
-            $results = Reviewer::deleteReviewer($id);
-            return $response->withStatus(200)->withJson($results);
-        } else {
+        $studio = Studio::getStudio($id);
+        if (!$studio) {
             return $response->withStatus(404);
         }
+        $result = Studio::deleteStudio($studio);
+        if ($result) {
+            return $response->withStatus(204);
+        } else {
+            return $response->withStatus(500);
+        }
     }
-   
 }

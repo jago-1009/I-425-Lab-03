@@ -3,12 +3,12 @@ include 'config/credentials.php';
 include 'vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-
+use Movies\Middleware\Logging as Logging;
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
 $app = new \Slim\App(['settings' => $config]);
-
+$app->add(new Logging());
 $capsule = new Capsule();
 $capsule->addConnection([
     'driver'    => 'mysql',
@@ -29,5 +29,6 @@ $container['db'] = function ($c) use ($capsule) {
     return $capsule;
 };
 
+require __DIR__ . '/config/routes.php';
 
 //var_dump($container['db']);
