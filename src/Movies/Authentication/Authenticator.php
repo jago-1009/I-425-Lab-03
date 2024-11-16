@@ -1,10 +1,5 @@
 <?php
-/**
- * Author:Ran Chang
- * Date: 8/8/2019
- * File: MyAuthenticator.php
- * Description:
- */
+
 namespace Movies\Authentication;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -24,7 +19,7 @@ class Authenticator
         $auth = $request->getHeader('MovieAPI-Authorization');
         list($username, $password) = explode(':', $auth[0]);
 
-        if (!User::authenticateUser($username, $password)) {
+        if (!Reviewer::authenticateReviewer($username, $password)) {
             $results = array("status" => "Authentication failed");
             return $response->withJson($results, 401, JSON_PRETTY_PRINT);
         }

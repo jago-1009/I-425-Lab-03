@@ -9,6 +9,7 @@ use Movies\Validations\Validator;
 
 class ReviewerController
 {
+    
     public function index(Request $request, Response $response, $args)
     {
         $results = Reviewer::getAllReviewers();

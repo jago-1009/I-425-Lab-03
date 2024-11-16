@@ -1,14 +1,13 @@
 <?php
 include 'config/credentials.php';
 include 'vendor/autoload.php';
-
+use Movies\Authentication\Authenticator as Authenticator;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Movies\Middleware\Logging as Logging;
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
 $app = new \Slim\App(['settings' => $config]);
-$app->add(new Logging());
 $capsule = new Capsule();
 $capsule->addConnection([
     'driver'    => 'mysql',

@@ -9,7 +9,6 @@ $configuration = [
         'logErrorDetails' => true,
     ],
 ];
-$c = new \Slim\Container($configuration);
-$app = new \Slim\App($c);
+
 
 

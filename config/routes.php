@@ -2,6 +2,7 @@
 
 use Movies\Middleware\Logging as Logging;
 use Movies\Authentication\Authenticator as Authenticator;
+use Movies\Authentication\BasicAuthenticator as BasicAuthenticator;
 
 $app->get('/', function ($request, $response, $args) {
     $message = [
@@ -110,6 +111,7 @@ $app->group('/reviewers', function ($app) {
     $app->patch('/{id}', 'Movies\Controllers\ReviewerController:update');    
     $app->delete('/{id}', 'Movies\Controllers\ReviewerController:delete');
 });
-// $app->add(new Authenticator());
+$app->add(new Authenticator());
 $app->add(new Logging());
+$app->add(new BasicAuthenticator());
 $app->run();

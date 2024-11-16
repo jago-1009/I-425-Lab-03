@@ -15,7 +15,14 @@ class Reviewer extends Model
     {
         return $this->hasMany(Review::class, 'reviewerId');
     }
-    public function getAllReviewers() {
+    public static function AuthenticateReviewer($username,$password) {
+        $user = Reviewer::where('username', $username)->first();
+        if (!$user) {
+            return false;
+        }
+        return password_verify($password, $user->password) ? $user : false;
+    }
+    public static function getAllReviewers() {
         $reviewers = Reviewer::all();
         $payload = [];
         foreach ($reviewers as $reviewer) {
@@ -26,7 +33,7 @@ class Reviewer extends Model
         }
         return $payload;
     }
-    public function createReviewer($request) {
+    public static function createReviewer($request) {
         $reviewer = new Reviewer();
         $reviewer->name = $request->getParsedBodyParam('name', '');
         $reviewer->created_at = date('Y-m-d H:i:s');
@@ -35,7 +42,7 @@ class Reviewer extends Model
             'status' => 'successful'
         ];
     }
-    public function getReviewer($id) {
+    public static function getReviewer($id) {
         $reviewer = Reviewer::find($id);
         $payload[$reviewer->id] = [
             'name' => $reviewer->name,
@@ -43,21 +50,21 @@ class Reviewer extends Model
         ];
         return $payload;
     }
-    public function updateReviewer($entry, $params) {
+    public static function updateReviewer($entry, $params) {
         foreach ($params as $field => $value) {
             $entry->$field = $value;
         }
         $entry->save();
         return $entry;
     }
-    public function deleteReviewer($id) {
+    public static function deleteReviewer($id) {
         $reviewer = Reviewer::find($id);
         $reviewer->delete();
         return [
             'status' => 'successful'
         ];
     }
-    public function getReviews($id) {
+    public static function getReviews($id) {
         $reviewer = Reviewer::find($id);
         return $reviewer->reviews()->get()->toArray();
     }
