@@ -252,7 +252,6 @@ $app->get('/reviewers/{id}/reviews', function (Request $request, Response $respo
 
 
 
-// GET GENRES FUNCTIONS
 
 
 

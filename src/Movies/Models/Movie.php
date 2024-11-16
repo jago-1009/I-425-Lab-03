@@ -78,6 +78,31 @@ class Movie extends Model
         return $sort_key_array;
     }
 
+    public static function getAllMovies() {
+        $movies = self::all();
+        $payload = [];
+        foreach ($movies as $movie) {
+            $payload[$movie->id] = [
+                'movieName' => $movie->movieName,
+                'releaseDate' => $movie->releaseDate,
+                'studioId' => $movie->studioId,
+                'directorId' => $movie->directorId,
+                'status' => 'successful'
+            ];
+        }
+        return $payload;
+    }
+    public static function getMovie($id) {
+        $movie = self::find($id);
+        $payload[$movie->id] = [
+            'movieName' => $movie->movieName,
+            'releaseDate' => $movie->releaseDate,
+            'studioId' => $movie->studioId,
+            'directorId' => $movie->directorId,
+            'status' => 'successful'
+        ];
+        return $payload;
+    }
     public static function searchMovies($terms)
     {
         if (is_numeric($terms)) {
@@ -88,5 +113,47 @@ class Movie extends Model
         $results = $query->get();
         return $results;
     }
+    public static function createMovie($request) {
+        $movie = new Movie();
+        $movie->movieName = $request->getParsedBodyParam('movieName','');
+        $movie->releaseDate = $request->getParsedBodyParam('releaseDate','');
+        $movie->studioId = $request->getParsedBodyParam('studioId','');
+        $movie -> directorId = $request->getParsedBodyParam('directorId','');
 
+        $movie->save();
+        return [
+            'status' => 'successful'
+        ];
+    }
+    public static function getMoviesbyGenre($id) {
+        $genre = Genre::find($id);
+        $movies = $genre->movies;
+        $payload = [];
+        foreach ($movies as $movie) {
+            $payload[] = [
+                'genre' => $genre->genreName,
+                'movieName' => $movie->movieName,
+                'releaseDate' => $movie->releaseDate,
+                'status' => 'successful'
+            ];
+        }
+        return $payload;
+    }
+    public static function updateMovie($movie,$params) {
+        foreach ($params as $field => $value) {
+            $movie->$field = $value;
+        }
+        $movie->save();
+        return [
+            'status' => 'successful'
+        ];
+    }
+    public static function deleteMovie($id) {
+        $movie = self::find($id);
+        $movie->delete();
+        return [
+            'status' => 'successful',
+            "results" => "Movie '/movies/$id' has been deleted."
+        ];
+    }
 }

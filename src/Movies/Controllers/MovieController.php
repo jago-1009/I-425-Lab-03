@@ -1,36 +1,34 @@
-<?php
-
+<?php 
 namespace Movies\Controllers;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Movies\Models\Genre;
-class GenreController
-{
-    public function index(Request $request, Response $response, $args) {
-        $results = Genre::getAllGenres();
-        $code = array_key_exists('status', $results) ? 500 : 200;
-        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
-}
+use Movies\Models\Movie;
 
-    public function view(Request $request, Response $response, $args)
-    {
-        $id = $args['id'];
-        $results = Genre::getGenre($id);
+
+class MovieController {
+    public function index(Request $request, Response $response) {
+        $results = Movie::getAllMovies();
         $code = array_key_exists('status', $results) ? 500 : 200;
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
-    public function viewMovie(Request $request, Response $response, $args) {
+    public function view(Request $request, Response $response, $args) {
         $id = $args['id'];
-        $results = Genre::getMoviesbyGenre($id);
+        $results = Movie::getMovie($id);
+        $code = array_key_exists('status', $results) ? 500 : 200;
+        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
+    }
+    public function viewGenre(Request $request, Response $response, $args) {
+        $id = $args['id'];
+        $results = Movie::getMoviesbyGenre($id);
         $code = array_key_exists('status', $results) ? 500 : 200;
         return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
     public function create(Request $request, Response $response, $args) {
-        $genre = Genre::createGenre($request);    
-        if ($genre->id) {
+        $movie = Movie::createMovie($request);
+        if ($movie->id) {
             $payload = [
-                'genreId' => $genre->id,
-                'genre_uri' => '/genres/' . $genre->id
+                'movieId' => $movie->id,
+                'movie_uri' => '/movies/' . $movie->id
             ];
             return $response->withStatus(201)->withJson($payload);
         } else {
@@ -39,15 +37,17 @@ class GenreController
     }
     public function update(Request $request, Response $response, $args) {
         $id = $args['id'];
-        $entry = Genre::getGenre($id);
+        $entry = Movie::getMovie($id);
         $params = $request->getParsedBody();
-        $genre = Genre::updateGenre($entry, $params);
-        if ($genre->id) {
+        $movie = Movie::updateMovie($entry, $params);
+        if ($movie->id) {
             $payload = [
-                'id' => $genre->id,
-                'genreName' => $genre->genreName,
-                'description' => $genre->description,
-                'genre_uri' => '/genres/' . $genre->id
+                'id' => $movie->id,
+                'movieName' => $movie->movieName,
+                'releaseDate' => $movie->releaseDate,
+                'studioId' => $movie->studioId,
+                'directorId' => $movie->directorId,
+                'movie_uri' => '/movies/' . $movie->id
             ];
             return $response->withStatus(200)->withJson($payload);
         } else {
@@ -56,13 +56,15 @@ class GenreController
     }
     public function delete(Request $request, Response $response, $args) {
         $id = $args['id'];
-        $entry = Genre::getGenre($id);
+        $entry = Movie::getMovie($id);
         if ($entry) {
-            $results = Genre::deleteGenre($id);
+            $results = Movie::deleteMovie($id);
             return $response->withStatus(200)->withJson($results);
         }
         else {
             return $response->withStatus(500);
         }
     }
+    
+
 }

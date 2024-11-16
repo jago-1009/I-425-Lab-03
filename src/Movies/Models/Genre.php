@@ -49,6 +49,21 @@ class Genre extends Model
         }
         return $payload;
     }
+    public static function createGenre($request) {
+        $genre = new Genre();
+        $_genre_name = $request->getParsedBodyParam('genreName', '');
+        $_description = $request->getParsedBodyParam('description', '');
+    
+    
+        $genre->genreName=$_genre_name;
+        $genre->description = $_description;
+    
+        $genre->save();
+    
+        return [
+            'status' => 'successful'
+        ];
+}
     public static function updateGenre($genre,$params) {
         foreach ($params as $field => $value) {
             $genre->$field = $value;
