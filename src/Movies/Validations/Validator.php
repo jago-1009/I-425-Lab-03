@@ -22,10 +22,9 @@ class Validator {
 
     public static function validateUser($request) {
         $rules = [
+            'name' => v::notEmpty(),
             'username' => v::noWhitespace()->notEmpty()->alnum(),
-            'email' => v::noWhitespace()->notEmpty()->email(),
             'password' => v::noWhitespace()->notEmpty(),
-            'profile-icon' => v::noWhitespace()->notEmpty(),
             'apikey' => v::notEmpty(),
         ];
 

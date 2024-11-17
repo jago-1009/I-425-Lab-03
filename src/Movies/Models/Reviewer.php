@@ -3,6 +3,8 @@
 namespace Movies\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class Reviewer extends Model
 {
@@ -10,6 +12,9 @@ class Reviewer extends Model
  protected $primaryKey = 'id';
 
  public $timestamps = false;
+
+    const JWT_KEY = 'my token';
+    const JWT_EXPIRE = 600;
 
     public function reviews()
     {
@@ -67,6 +72,42 @@ class Reviewer extends Model
     public static function getReviews($id) {
         $reviewer = Reviewer::find($id);
         return $reviewer->reviews()->get()->toArray();
+    }
+
+    public static function generateJWT($id){
+        //Data for payload
+        $user = $user = self::findOrFail($id);
+        if(!$user){
+            return false;
+        }
+
+        $key = self::JWT_KEY;
+        $expiration = time() + self::JWT_EXPIRE;
+        $issuer = 'movie-api.com';
+
+        $token = [
+            'iss' => $issuer,
+            'exp' => $expiration,
+            'iat' => time(),
+            'data' => [
+                'uid' => $id,
+                'name' => $user->username,
+                'email' => $user->email
+            ]
+        ];
+
+        //Generate and return token
+        return JWT::encode(
+            $token,
+            $key,
+            'HS256'
+        );
+    }
+
+    public static function validateJWT($token){
+        $decoded = JWT::decode($token, new Key(self::JWT_KEY, 'HS256'));
+
+        return $decoded;
     }
     
 }

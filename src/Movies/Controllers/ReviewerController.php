@@ -6,6 +6,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Movies\Models\Reviewer;
 use Movies\Validations\Validator;
+use Movies\Models\Token;
+
 
 class ReviewerController
 {
@@ -98,5 +100,58 @@ class ReviewerController
             return $response->withStatus(404);
         }
     }
-   
+
+    // BEARER TOKEN
+    public function authBearer(Request $request, Response $response)
+    {
+        $params = $request->getParsedBody();
+        $username = $params['username'];
+        $password = $params['password'];
+
+        $user = Reviewer::AuthenticateReviewer($username, $password);
+
+        if ($user) {
+            $status_code = 200;
+            $token = Token::generateBearer($user->id);
+            $results = [
+                'status' => 'login successful',
+                'token' => $token
+            ];
+        } else {
+            $status_code = 401;
+            $results = [
+                'status' => 'login failed'
+            ];
+        }
+
+        return $response->withJson($results, $status_code, JSON_PRETTY_PRINT);
+    }
+
+    public function authJWT(Request $request, Response $response){
+        $params = $request->getParsedBody();
+        $username = $params['username'];
+        $password = $params['password'];
+
+        $user = Reviewer::AuthenticateReviewer($username, $password);
+
+        if($user){
+            $status_code = 200;
+            $jwt = Reviewer::generateJWT($user->id);
+            $results = [
+                'status' => 'login successful',
+                'jwt' => $jwt,
+                'name' => $user->username
+            ];
+        } else {
+            $status_code = 401;
+            $results = [
+                'status' => 'login failed',
+            ];
+        }
+
+        //return $results
+        return $response->withJson($results, $status_code, JSON_PRETTY_PRINT);
+    }
+
+
 }

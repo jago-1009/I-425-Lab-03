@@ -3,6 +3,8 @@
 use Movies\Middleware\Logging as Logging;
 use Movies\Authentication\Authenticator as Authenticator;
 use Movies\Authentication\BasicAuthenticator as BasicAuthenticator;
+use Movies\Authentication\BearerAuthenticator as BearerAuthenticator;
+use Movies\Authentication\JWTAuthenticator as JWTAuthenticator;
 
 $app->get('/', function ($request, $response, $args) {
     $message = [
@@ -59,59 +61,69 @@ $app->get('/', function ($request, $response, $args) {
 
     return $response->withJson($message);
 });
-$app->group('/movies', function ($app) {
-    $app->get('', 'Movies\Controllers\MovieController:index');
-    $app->get('/{id}', 'Movies\Controllers\MovieController:view');
-    $app->get('/{id}/reviews', 'Movies\Controllers\MovieController:reviews');
-    $app->post('', 'Movies\Controllers\MovieController:create');
-    $app->patch('/{id}', 'Movies\Controllers\MovieController:update');
-    $app->delete('/{id}', 'Movies\Controllers\MovieController:delete');
-});
-
-$app->group('/directors', function ($app) {
-    $app->get('', 'Movies\Controllers\DirectorController:index');
-    $app->get('/{id}', 'Movies\Controllers\DirectorController:view');
-    $app->get('/{id}/movies', 'Movies\Controllers\DirectorController:viewMovie');
-    $app->post('', 'Movies\Controllers\DirectorController:create');
-    $app->patch('/{id}', 'Movies\Controllers\DirectorController:update');    
-    $app->delete('/{id}', 'Movies\Controllers\DirectorController:delete');
-});
-
-$app->group('/genres', function ($app) {
-    $app->get('', 'Movies\Controllers\GenreController:index');
-    $app->get('/{id}', 'Movies\Controllers\GenreController:view');
-    $app->get('/{id}/movies', 'Movies\Controllers\GenreController:viewMovie');
-    $app->post('', 'Movies\Controllers\GenreController:create');
-    $app->patch('/{id}', 'Movies\Controllers\GenreController:update');
-    $app->delete('/{id}', 'Movies\Controllers\GenreController:delete');
-});
-
-$app->group('/studios', function ($app) {
-    $app->get('', 'Movies\Controllers\StudioController:index');
-    $app->get('/{id}', 'Movies\Controllers\StudioController:view');    
-    $app->get('/{id}/movies', 'Movies\Controllers\StudioController:viewMovie');
-    $app->post('', 'Movies\Controllers\StudioController:create');
-    $app->patch('/{id}', 'Movies\Controllers\StudioController:update');    
-    $app->delete('/{id}', 'Movies\Controllers\StudioController:delete');
-});
-
-$app->group('/reviews', function ($app) {
-    $app->get('', 'Movies\Controllers\ReviewController:index');
-    $app->get('/{id}', 'Movies\Controllers\ReviewController:view');    
-    $app->post('/{id}', 'Movies\Controllers\ReviewController:create');
-    $app->patch('/{id}', 'Movies\Controllers\ReviewController:update');
-    $app->delete('/{id}', 'Movies\Controllers\ReviewController:delete');
-});
 
 $app->group('/reviewers', function ($app) {
     $app->get('', 'Movies\Controllers\ReviewerController:index');
     $app->get('/{id}', 'Movies\Controllers\ReviewerController:view');
     $app->get('/{id}/reviews', 'Movies\Controllers\ReviewerController:getReviews');
     $app->post('', 'Movies\Controllers\ReviewerController:create');
-    $app->patch('/{id}', 'Movies\Controllers\ReviewerController:update');    
+    $app->patch('/{id}', 'Movies\Controllers\ReviewerController:update');
     $app->delete('/{id}', 'Movies\Controllers\ReviewerController:delete');
+
+    $this->post('/authBearer', 'Movies\Controllers\ReviewerController:authBearer');
+    $this->post('/authJWT', 'Movies\Controllers\ReviewerController:authJWT');
 });
-$app->add(new Authenticator());
+
+$app->group('', function () use ($app) {
+    $app->group('/movies', function ($app) {
+        $app->get('', 'Movies\Controllers\MovieController:index');
+        $app->get('/{id}', 'Movies\Controllers\MovieController:view');
+        $app->get('/{id}/reviews', 'Movies\Controllers\MovieController:reviews');
+        $app->post('', 'Movies\Controllers\MovieController:create');
+        $app->patch('/{id}', 'Movies\Controllers\MovieController:update');
+        $app->delete('/{id}', 'Movies\Controllers\MovieController:delete');
+    });
+
+    $app->group('/directors', function ($app) {
+        $app->get('', 'Movies\Controllers\DirectorController:index');
+        $app->get('/{id}', 'Movies\Controllers\DirectorController:view');
+        $app->get('/{id}/movies', 'Movies\Controllers\DirectorController:viewMovie');
+        $app->post('', 'Movies\Controllers\DirectorController:create');
+        $app->patch('/{id}', 'Movies\Controllers\DirectorController:update');
+        $app->delete('/{id}', 'Movies\Controllers\DirectorController:delete');
+    });
+
+    $app->group('/genres', function ($app) {
+        $app->get('', 'Movies\Controllers\GenreController:index');
+        $app->get('/{id}', 'Movies\Controllers\GenreController:view');
+        $app->get('/{id}/movies', 'Movies\Controllers\GenreController:viewMovie');
+        $app->post('', 'Movies\Controllers\GenreController:create');
+        $app->patch('/{id}', 'Movies\Controllers\GenreController:update');
+        $app->delete('/{id}', 'Movies\Controllers\GenreController:delete');
+    });
+
+    $app->group('/studios', function ($app) {
+        $app->get('', 'Movies\Controllers\StudioController:index');
+        $app->get('/{id}', 'Movies\Controllers\StudioController:view');
+        $app->get('/{id}/movies', 'Movies\Controllers\StudioController:viewMovie');
+        $app->post('', 'Movies\Controllers\StudioController:create');
+        $app->patch('/{id}', 'Movies\Controllers\StudioController:update');
+        $app->delete('/{id}', 'Movies\Controllers\StudioController:delete');
+    });
+
+    $app->group('/reviews', function ($app) {
+        $app->get('', 'Movies\Controllers\ReviewController:index');
+        $app->get('/{id}', 'Movies\Controllers\ReviewController:view');
+        $app->post('/{id}', 'Movies\Controllers\ReviewController:create');
+        $app->patch('/{id}', 'Movies\Controllers\ReviewController:update');
+        $app->delete('/{id}', 'Movies\Controllers\ReviewController:delete');
+    });
+//})->add(new Authenticator());
+//})->add(new BasicAuthenticator());
+})->add(new BearerAuthenticator());
+//})->add(new JWTAuthenticator());
+
 $app->add(new Logging());
-$app->add(new BasicAuthenticator());
+//$app->add(new BasicAuthenticator());
+
 $app->run();
