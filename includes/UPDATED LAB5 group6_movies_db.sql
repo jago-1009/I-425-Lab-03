@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2024 at 12:18 AM
+-- Generation Time: Nov 18, 2024 at 12:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `group6_movies_db`
 --
+CREATE DATABASE IF NOT EXISTS `group6_movies_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `group6_movies_db`;
 
 -- --------------------------------------------------------
 
@@ -27,6 +29,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `directors`
 --
 
+DROP TABLE IF EXISTS `directors`;
 CREATE TABLE `directors` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -52,6 +55,7 @@ INSERT INTO `directors` (`id`, `name`, `bio`, `birthDate`, `deathDate`) VALUES
 -- Table structure for table `genres`
 --
 
+DROP TABLE IF EXISTS `genres`;
 CREATE TABLE `genres` (
   `id` int(11) NOT NULL,
   `genreName` varchar(255) NOT NULL,
@@ -75,6 +79,7 @@ INSERT INTO `genres` (`id`, `genreName`, `description`) VALUES
 -- Table structure for table `movies`
 --
 
+DROP TABLE IF EXISTS `movies`;
 CREATE TABLE `movies` (
   `id` int(11) NOT NULL,
   `movieName` varchar(255) NOT NULL,
@@ -100,6 +105,7 @@ INSERT INTO `movies` (`id`, `movieName`, `releaseDate`, `studioId`, `directorId`
 -- Table structure for table `movies_genres`
 --
 
+DROP TABLE IF EXISTS `movies_genres`;
 CREATE TABLE `movies_genres` (
   `movieId` int(11) NOT NULL,
   `genreId` int(11) NOT NULL
@@ -127,6 +133,7 @@ INSERT INTO `movies_genres` (`movieId`, `genreId`) VALUES
 -- Table structure for table `reviewer`
 --
 
+DROP TABLE IF EXISTS `reviewer`;
 CREATE TABLE `reviewer` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -144,7 +151,8 @@ INSERT INTO `reviewer` (`id`, `name`, `password`, `created_at`, `username`) VALU
 (2, 'Mark T.\r\n', '', '2024-10-03 02:39:13', ''),
 (3, 'Sarah L.\r\n', '', '2024-10-03 02:39:27', ''),
 (4, 'John M.\r\n', '', '2024-10-03 02:39:27', ''),
-(5, 'Alex K.\r\n', '', '2024-10-03 02:39:33', '');
+(5, 'Alex K.\r\n', '', '2024-10-03 02:39:33', ''),
+(7, 'User', '', '2024-11-18 04:44:11', '');
 
 -- --------------------------------------------------------
 
@@ -152,6 +160,7 @@ INSERT INTO `reviewer` (`id`, `name`, `password`, `created_at`, `username`) VALU
 -- Table structure for table `reviews`
 --
 
+DROP TABLE IF EXISTS `reviews`;
 CREATE TABLE `reviews` (
   `id` int(11) NOT NULL,
   `reviewerId` int(11) NOT NULL,
@@ -178,6 +187,7 @@ INSERT INTO `reviews` (`id`, `reviewerId`, `review`, `movieId`, `created_at`, `r
 -- Table structure for table `studios`
 --
 
+DROP TABLE IF EXISTS `studios`;
 CREATE TABLE `studios` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -195,6 +205,28 @@ INSERT INTO `studios` (`id`, `name`, `description`, `foundingDate`) VALUES
 (3, 'Focus Features', 'Focus Features is an American film production and distribution company, created as a merger of USA Films, Universal Focus, and Good Machine. Focus specializes in art-house films and independent cinema with broad appeal, producing critically acclaimed and ', '2002'),
 (4, 'Toho Co., Ltd.', 'Toho Co., Ltd. is a Japanese film production and distribution company best known for creating the legendary Godzilla franchise. Toho is also recognized for producing and distributing some of Japan’s most critically acclaimed films, including the works of ', '1932'),
 (5, 'A24', 'A24 is an independent entertainment company that has quickly risen to prominence for its focus on original, boundary-pushing films. Since its founding, A24 has produced and distributed numerous critically acclaimed films, including Lady Bird (2017), Moonl', '2012');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tokens`
+--
+
+DROP TABLE IF EXISTS `tokens`;
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL,
+  `user` int(11) NOT NULL,
+  `value` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tokens`
+--
+
+INSERT INTO `tokens` (`id`, `user`, `value`, `created_at`, `updated_at`) VALUES
+(1, 1, 'e3ae7346df750ce2c2b85d0ec718e6eb54d633ad2054f6bea0f5dba66710fd70436f6a7148b6867fa43d86fe2486d30157eb4d7a95085aa37513a2443876f11b', '2024-11-18 00:07:14', '2024-11-18 00:07:14');
 
 --
 -- Indexes for dumped tables
@@ -248,6 +280,13 @@ ALTER TABLE `studios`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tokens`
+--
+ALTER TABLE `tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user` (`user`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -273,7 +312,7 @@ ALTER TABLE `movies`
 -- AUTO_INCREMENT for table `reviewer`
 --
 ALTER TABLE `reviewer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -286,6 +325,12 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `studios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `tokens`
+--
+ALTER TABLE `tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -311,6 +356,12 @@ ALTER TABLE `movies_genres`
 ALTER TABLE `reviews`
   ADD CONSTRAINT `fk_movies_reviews` FOREIGN KEY (`movieId`) REFERENCES `movies` (`id`),
   ADD CONSTRAINT `fk_reviews_reviewer` FOREIGN KEY (`reviewerId`) REFERENCES `reviewer` (`id`);
+
+--
+-- Constraints for table `tokens`
+--
+ALTER TABLE `tokens`
+  ADD CONSTRAINT `tokens_ibfk_1` FOREIGN KEY (`user`) REFERENCES `reviewer` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
