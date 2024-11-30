@@ -8,12 +8,12 @@
 <div class="card">
     <div class="title">Lorem</div>
     <div class="studio">By: Ipsum</div>
-    <div class="r-date">Release Date</div>
+    <div class="r-date">Released On: Release Date</div>
 </div>
 <div class="card">  <div class="title">Lorem</div>
     <div class="studio">By: Ipsum</div>
-    <div class="r-date">Release Date</div></div>
+    <div class="r-date">Released On: Release Date</div></div>
 <div class="card">  <div class="title">Lorem</div>
     <div class="studio">By: Ipsum</div>
-    <div class="r-date">Release Date</div></div>
+    <div class="r-date">Released On: Release Date</div></div>
     </div>
