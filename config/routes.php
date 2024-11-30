@@ -7,59 +7,59 @@ use Movies\Authentication\BearerAuthenticator as BearerAuthenticator;
 use Movies\Authentication\JWTAuthenticator as JWTAuthenticator;
 
 $app->get('/', function ($request, $response, $args) {
-    $message = [
-        "endpoints" => [
-            "movies (Added pagination and sorting functionality along with search)" => [
-                "Get all movies" => "/movies",
-                "Get a single movie" => "/movies/{id}",
-                "Get reviews for a specific movie by movie" => "/movies/{id}/reviews",
-                "Add a new movie" => "/movies [POST]",
-                "Update a movie" => "/movies/{id} [PATCH]",
-                "Delete a movie" => "/movies/{id} [DELETE]",
-            ],
-            "directors (Added search functionality)" => [
-                "Get all directors" => "/directors",
-                "Get a single director" => "/directors/{id}",
-                "Get all movies by a specific director" => "/directors/{id}/movies",
-                "Add a new director" => "/directors [POST]",
-                "Update a director" => "/directors/{id} [PATCH]",
-                "Delete a director" => "/directors/{id} [DELETE]",
-            ],
-            "genres" => [
-                "Get all genres" => "/genres",
-                "Get a single genre" => "/genres/{id}",
-                "Get all movies in a specific genre by genre" => "/genre/{id}/movies",
-                "Add a new genre" => "/genres [POST]",
-                "Update a genre" => "/genres/{id} [PATCH]",
-                "Delete a genre" => "/genres/{id} [DELETE]",
-            ],
-            "studios" => [
-                "Get all studios" => "/studios",
-                "Get a single studio" => "/studios/{id}",
-                "Get all movies by a specific studio" => "/studios/{id}/movies",
-                "Add a new studio" => "/studios [POST]",
-                "Update a studio" => "/studios/{id} [PATCH]",
-                "Delete a studio" => "/studios/{id} [DELETE]",
-            ],
-            "reviews" => [
-                "Get all reviews" => "/reviews",
-                "Get a single review" => "/reviews/{id}",
-                "Add a new review to a movie" => "/movies/{id}/reviews [POST]",
-                "Update a review" => "/reviews/{id} [PATCH]",
-                "Delete a review" => "/reviews/{id} [DELETE]",
-            ],
-            "reviewers" => [
-                "Get all reviewers" => "/reviewers",
-                "Get a single reviewer" => "/reviewers/{id}",
-                "Get all reviews by a specific reviewer" => "/reviewers/{id}/reviews",
-                "Add a new reviewer" => "/reviewers [POST]",
-                "Update a reviewer" => "/reviewers/{id} [PATCH]",
-                "Delete a reviewer" => "/reviewers/{id} [DELETE]",
-            ],
-        ]
-    ];
+    // $message = [
+    //     "endpoints" => [
+    //         "movies (Added pagination and sorting functionality along with search)" => [
+    //             "Get all movies" => "/movies",
+    //             "Get a single movie" => "/movies/{id}",
+    //             "Get reviews for a specific movie by movie" => "/movies/{id}/reviews",
+    //             "Add a new movie" => "/movies [POST]",
+    //             "Update a movie" => "/movies/{id} [PATCH]",
+    //             "Delete a movie" => "/movies/{id} [DELETE]",
+    //         ],
+    //         "directors (Added search functionality)" => [
+    //             "Get all directors" => "/directors",
+    //             "Get a single director" => "/directors/{id}",
+    //             "Get all movies by a specific director" => "/directors/{id}/movies",
+    //             "Add a new director" => "/directors [POST]",
+    //             "Update a director" => "/directors/{id} [PATCH]",
+    //             "Delete a director" => "/directors/{id} [DELETE]",
+    //         ],
+    //         "genres" => [
+    //             "Get all genres" => "/genres",
+    //             "Get a single genre" => "/genres/{id}",
+    //             "Get all movies in a specific genre by genre" => "/genre/{id}/movies",
+    //             "Add a new genre" => "/genres [POST]",
+    //             "Update a genre" => "/genres/{id} [PATCH]",
+    //             "Delete a genre" => "/genres/{id} [DELETE]",
+    //         ],
+    //         "studios" => [
+    //             "Get all studios" => "/studios",
+    //             "Get a single studio" => "/studios/{id}",
+    //             "Get all movies by a specific studio" => "/studios/{id}/movies",
+    //             "Add a new studio" => "/studios [POST]",
+    //             "Update a studio" => "/studios/{id} [PATCH]",
+    //             "Delete a studio" => "/studios/{id} [DELETE]",
+    //         ],
+    //         "reviews" => [
+    //             "Get all reviews" => "/reviews",
+    //             "Get a single review" => "/reviews/{id}",
+    //             "Add a new review to a movie" => "/movies/{id}/reviews [POST]",
+    //             "Update a review" => "/reviews/{id} [PATCH]",
+    //             "Delete a review" => "/reviews/{id} [DELETE]",
+    //         ],
+    //         "reviewers" => [
+    //             "Get all reviewers" => "/reviewers",
+    //             "Get a single reviewer" => "/reviewers/{id}",
+    //             "Get all reviews by a specific reviewer" => "/reviewers/{id}/reviews",
+    //             "Add a new reviewer" => "/reviewers [POST]",
+    //             "Update a reviewer" => "/reviewers/{id} [PATCH]",
+    //             "Delete a reviewer" => "/reviewers/{id} [DELETE]",
+    //         ],
+    //     ]
+    // ];
 
-    return $response->withJson($message);
+    // return $response->withJson($message);
 });
 
 $app->group('/reviewers', function ($app) {
