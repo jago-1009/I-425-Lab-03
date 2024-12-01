@@ -119,7 +119,7 @@ $app->group('', function () use ($app) {
         $app->delete('/{id}', 'Movies\Controllers\ReviewController:delete');
     });
 //})->add(new Authenticator());
-//})->add(new BasicAuthenticator());
+// })->add(new BasicAuthenticator());
 })->add(new BearerAuthenticator());
 //})->add(new JWTAuthenticator());
 
