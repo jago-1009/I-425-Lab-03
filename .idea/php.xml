@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="highlightLevel" value="WARNING" />
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/nikic/fast-route" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/respect/stringifier" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/slim/slim" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/kylekatarnls/update-helper" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/illuminate/support" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/illuminate/database" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/illuminate/contracts" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/illuminate/container" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/composer" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/pimple/pimple" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/I-425-Lab-03-main/vendor/respect/validation" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.0">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/I-425-Lab-03-main/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+</project>

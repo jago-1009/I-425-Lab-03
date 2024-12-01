@@ -1,0 +1,14 @@
+
+.home-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top:20px;
+    flex-direction: column;
+}
+#app {
+    height:calc(100vh - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

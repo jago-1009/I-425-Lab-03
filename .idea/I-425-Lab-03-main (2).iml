@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/src/Movies" isTestSource="false" packagePrefix="Movies\" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/doctrine/inflector" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/firebase/php-jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/illuminate/container" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/illuminate/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/illuminate/database" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/illuminate/support" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/kylekatarnls/update-helper" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/nikic/fast-route" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/pimple/pimple" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/respect/stringifier" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/respect/validation" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/slim/slim" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/I-425-Lab-03-main/vendor/symfony/translation-contracts" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

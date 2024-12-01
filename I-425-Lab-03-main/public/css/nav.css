@@ -1,0 +1,24 @@
+--root {
+    --primary-color: #2E2C2F;
+    --secondary-color: #475B63;
+    --side-color: ##729B79;
+    --text-color:##F3E8EE;
+}
+nav {
+    height:50px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #2E2C2F;
+    align-items: center;
+}
+.left {
+    margin-left: 50px;
+}
+nav * {
+    display: inline;
+    padding-right:20px;
+}
+nav a {
+    text-decoration: none;
+    color:#f3e8ee;
+}
