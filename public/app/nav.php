@@ -13,19 +13,19 @@
    <nav>
     <div class="left">
        <ul>
-           <li><a href="#">Home</a></li>
-           <li><a href="#movies">Movies</a></li>
-           <li><a href="#directors">Directors</a></li>
-           <li><a href="#studios">Studios</a></li>
-           <li><a href="#genres">Genres</a></li>
-           <li><a href="#reviews">Reviews</a></li>
+           <li><a class="link" href="#">Home</a></li>
+           <li><a class="link"href="#movies">Movies</a></li>
+           <li><a class="link"href="#directors">Directors</a></li>
+           <li><a class="link"href="#studios">Studios</a></li>
+           <li><a class="link"href="#genres">Genres</a></li>
+           <li><a class="link"href="#reviews">Reviews</a></li>
        </ul>
        </div>
        <div class="right">
            <ul>
-               <li><a href="#">Login</a></li>
-               <li><a href="#">Register</a></li>
-               <li><a href="#" style="display:none;">Logout</a></li>
+               <li><a class="link"href="#">Login</a></li>
+               <li><a class="link"href="#">Register</a></li>
+               <li><a class="link"href="#" style="display:none;">Logout</a></li>
            </ul>
        </div>
    </nav>
