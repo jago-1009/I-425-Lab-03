@@ -5,7 +5,7 @@
       <paths name="XAMPP">
         <serverdata>
           <mappings>
-            <mapping deploy="\" local="$PROJECT_DIR$" web="/I-425/HOP5" />
+            <mapping deploy="\" local="$PROJECT_DIR$" web="I-425-Lab-03" />
           </mappings>
         </serverdata>
       </paths>

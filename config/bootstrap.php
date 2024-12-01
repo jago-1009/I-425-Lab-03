@@ -1,6 +1,6 @@
 <?php
-include 'config/credentials.php';
-include 'vendor/autoload.php';
+include '../config/credentials.php';
+include '../vendor/autoload.php';
 use Movies\Authentication\Authenticator as Authenticator;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Movies\Middleware\Logging as Logging;
@@ -28,6 +28,6 @@ $container['db'] = function ($c) use ($capsule) {
     return $capsule;
 };
 
-require __DIR__ . '/config/routes.php';
+require __DIR__ . '\routes.php';
 
 //var_dump($container['db']);
