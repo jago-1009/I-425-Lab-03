@@ -1,9 +1,4 @@
---root {
-    --primary-color: #2E2C2F;
-    --secondary-color: #475B63;
-    --side-color: ##729B79;
-    --text-color:##F3E8EE;
-}
+
 nav {
     height:50px;
     display: flex;

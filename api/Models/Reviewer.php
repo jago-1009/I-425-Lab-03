@@ -41,6 +41,8 @@ class Reviewer extends Model
     public static function createReviewer($request) {
         $reviewer = new Reviewer();
         $reviewer->name = $request->getParsedBodyParam('name', '');
+        $reviewer->username = $request->getParsedBodyParam('username', '');
+        $reviewer->password = password_hash($request->getParsedBodyParam('password', ''), PASSWORD_DEFAULT);
         $reviewer->created_at = date('Y-m-d H:i:s');
         $reviewer->save();
         return [

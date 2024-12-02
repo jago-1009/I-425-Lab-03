@@ -25,7 +25,7 @@ class Validator {
             'name' => v::notEmpty(),
             'username' => v::noWhitespace()->notEmpty()->alnum(),
             'password' => v::noWhitespace()->notEmpty(),
-            'apikey' => v::notEmpty(),
+            //'apikey' => v::notEmpty(),
         ];
 
         return self::validate($request, $rules);

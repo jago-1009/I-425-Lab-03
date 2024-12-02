@@ -38,21 +38,19 @@ class ReviewerController
         $validation = Validator::validateUser($request);
         if (!$validation) {
             $results = [
-                'status' => 'failed',
+                'status' => 'validation failed',
                 'errors' => Validator::getErrors()
             ];
             return $response->withStatus(500)->withJson($results);
         }
         $reviewer = Reviewer::createReviewer($request);
-        if ($reviewer->id) {
-            $payload = [
-                'reviewerId' => $reviewer->id,
-                'reviewer_uri' => '/reviewers/' . $reviewer->id
-            ];
-            return $response->withStatus(201)->withJson($payload);
-        } else {
-            return $response->withStatus(500);
-        }
+        $results = [
+            'status' => 'user created',
+            'data' => $reviewer
+        ];
+
+        $code = isset($results['status']) ? 201 : 500;
+        return $response->withJson($results, $code, JSON_PRETTY_PRINT);
     }
 
     public function update(Request $request, Response $response, $args)

@@ -1,0 +1,22 @@
+.signup-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-form label, .signup-form input{
+    width: 400px;
+}
+
+.signin-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.signin-form label, .signin-form input{
+    width: 400px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+}

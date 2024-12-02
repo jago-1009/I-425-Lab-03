@@ -28,6 +28,6 @@ $container['db'] = function ($c) use ($capsule) {
     return $capsule;
 };
 
-require __DIR__ . '\routes.php';
+require __DIR__ . '/routes.php';
 
 //var_dump($container['db']);
