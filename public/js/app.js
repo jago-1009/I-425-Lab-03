@@ -86,7 +86,6 @@ function initListeners() {$('.link').on('click', function(e) {
             },
             success: function (response) {
                 $("#sign-in").css('display', 'none');
-                initListeners();
                 sessionStorage.setItem('token', response.token)
             }
 
