@@ -4,11 +4,14 @@ let apiURL = 'http://localhost:8000/api';
 function initListeners() {$('.link').on('click', function(e) {
     let href = $(this).attr('href')
     href = href.replace('#', '')
-    $("#app").html(`<h1>${href}</h1>`)
+    $("#app").html(``)
+    $(".header").html(``)
+
     switch (href) {
         case 'movies':
           let token = sessionStorage.getItem('token')
-
+            $(".header").html(
+                `<h1>Movies</h1>`)
             if (token) {
                 $.ajax({
                     type: "GET",
@@ -17,7 +20,27 @@ function initListeners() {$('.link').on('click', function(e) {
                         "Authorization": `Bearer ${token}`
                     },
                     success: function (response) {
-                        console.log(response)
+                        let cardsHTML = '<div class="cards">';
+
+                        for (const key in response.data) {
+                            if (response.data.hasOwnProperty(key)) {
+                                const movie = response.data[key];
+                                cardsHTML += `
+                    <div class="card">
+                        <div class="title">${movie.movieName}</div>
+                        <div class="studio">By: Studio ${movie.studioId}</div>
+                        <div class="r-date">Released On: ${movie.releaseDate}</div>
+                    </div>`;
+                            }
+                        }
+
+                        cardsHTML += '</div>'; // Close the .cards div
+
+                        // Insert the generated HTML into the app container
+                        $("#app").html(cardsHTML);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching movies:", error);
                     }
                 });
                 break;
@@ -30,19 +53,21 @@ function initListeners() {$('.link').on('click', function(e) {
 
 
         case 'directors':
-            $("#app").html(`<h1>Directors</h1>`)
+            $(".header").html(`<h1>Directors</h1>`)
             break;
         case 'studios':
-            $("#app").html(`<h1>Studios</h1>`)
+            $(".header").html(`<h1>Studios</h1>`)
             break;
         case 'genres':
-            $("#app").html(`<h1>Genres</h1>`)
+            $(".header").html(`<h1>Genres</h1>`)
             break;
         case 'reviews':
-            $("#app").html(`<h1>Reviews</h1>`)
+            $(".header").html(`<h1>Reviews</h1>`)
             break;
 
         default:
+            $(".header").html(``)
+
             $.ajax({
                 type: "GET",
                 url: "public/app/home.php",

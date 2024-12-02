@@ -31,4 +31,5 @@
            </ul>
        </div>
    </nav>
+   <div class="header"></div>
    <div id="app">

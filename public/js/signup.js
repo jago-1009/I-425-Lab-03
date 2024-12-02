@@ -1,4 +1,4 @@
-const baseUrl_API = 'http://localhost:8000';
+const baseUrl_API = 'http://localhost:8000/api';
 
 $(document).ready(function() {
     // Use event delegation and prevent multiple bindings
