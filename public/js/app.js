@@ -1,4 +1,4 @@
-let apiURL = 'http://localhost:8000'
+let apiURL = 'http://localhost:8000/api';
 
 
 function initListeners() {$('.link').on('click', function(e) {
@@ -7,8 +7,19 @@ function initListeners() {$('.link').on('click', function(e) {
     $("#app").html(`<h1>${href}</h1>`)
     switch (href) {
         case 'movies':
-            $("#app").html(`<h1>Movies</h1>`)
-            break;
+          let token = sessionStorage.getItem('token')
+          
+          $.ajax({
+               type: "GET",
+               url: apiURL + "/movies",
+               headers: {
+                    "Authorization": `Bearer ${token}`
+               },
+               success: function (response) {
+                    console.log(response)
+               }
+          });
+           break;
         case 'directors':
             $("#app").html(`<h1>Directors</h1>`)
             break;
@@ -25,7 +36,7 @@ function initListeners() {$('.link').on('click', function(e) {
         default:
             $.ajax({
                 type: "GET",
-                url: "home.php",
+                url: "public/app/home.php",
                 success: function (response) {
                     $("#app").html(response);
                 }
