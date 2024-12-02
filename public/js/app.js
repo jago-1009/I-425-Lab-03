@@ -8,18 +8,27 @@ function initListeners() {$('.link').on('click', function(e) {
     switch (href) {
         case 'movies':
           let token = sessionStorage.getItem('token')
-          
-          $.ajax({
-               type: "GET",
-               url: apiURL + "/movies",
-               headers: {
-                    "Authorization": `Bearer ${token}`
-               },
-               success: function (response) {
-                    console.log(response)
-               }
-          });
-           break;
+
+            if (token) {
+                $.ajax({
+                    type: "GET",
+                    url: apiURL + "/movies",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
+                    success: function (response) {
+                        console.log(response)
+                    }
+                });
+                break;
+            } else {
+                $("#app").html(
+                    `<p>Unauthorized access, please login.</p>`
+            )
+                break;
+            }
+
+
         case 'directors':
             $("#app").html(`<h1>Directors</h1>`)
             break;
