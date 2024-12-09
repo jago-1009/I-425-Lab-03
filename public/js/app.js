@@ -52,6 +52,57 @@ function initListeners() {
 
       case "directors":
         $(".header").html(`<h1>Directors</h1>`);
+        const url = apiURL + "/directors";
+
+        if (token) {
+            axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then(async response => {
+                
+                let cardsHTML = '<div class="cards">';
+
+                for (const key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        let moviesByDirector = '<ul>';
+                        const director = response.data[key];
+                        await axios.get(`${apiURL}/directors/${key}/movies`, {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        }).then(async moviesResponse => 
+                        {
+                            for (const movieKey in moviesResponse.data) {
+                                let listMovie = moviesResponse.data[movieKey].movieName;
+                                
+                                moviesByDirector += `<li>${listMovie}</li>`
+                            }
+                            moviesByDirector += '</ul>';
+                        }
+                        )
+                        console.log(moviesByDirector)
+                     
+                       
+                        cardsHTML += `
+                            <div class="card">
+                       <div class="title">${director.name}</div>
+                       <div class="studio">Born On: ${director.birthDate}</div>
+                       `;
+                       if (director.deathDate) {
+                           cardsHTML += `<div class="r-date">Died On: ${director.deathDate}</div>`;
+                       }
+                    cardsHTML += `<div>Movies:${moviesByDirector}</div>`
+                    cardsHTML += `</div>`;
+                    }
+                }
+
+                cardsHTML += "</div>"; // Close the .cards div
+
+                // Insert the generated HTML into the app container
+                $("#app").html(cardsHTML);
+            })
+        }
         break;
       case "studios":
         $(".header").html(`<h1>Studios</h1>`);
