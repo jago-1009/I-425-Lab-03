@@ -23,6 +23,12 @@
            <li><a class="link" href="#reviews">Reviews</a></li>
        </ul>
        </div>
+       <div class="center">
+        
+        <input type="text" id="search-input" name="q" placeholder="Enter Movie Name...">
+        <a href="#search" class="link" id="search">Search for movie</a>
+    
+       </div>
        <div class="right">
            <ul>
                <li><a href="#" id="login">Login</a></li>

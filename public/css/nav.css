@@ -17,3 +17,10 @@ nav a {
     text-decoration: none;
     color:#f3e8ee;
 }
+.btn {
+    cursor: pointer;
+}
+
+.center form {
+    flex-direction: row;
+}
