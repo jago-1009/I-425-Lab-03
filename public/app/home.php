@@ -1,6 +1,6 @@
 
 <div class="home-container">
-  <h1>Welcome to the Movies API</h1>
+  <h1 id="header" style="font-color: #FFFFFF ">Welcome to the Movies API</h1>
 
 <div class="cards">
 <div class="card">

@@ -32,11 +32,14 @@ class Director extends Model
             $directors = Director::searchDirectors($term);
             $payload = [];
             foreach ($directors as $_director) {
+                $movies = Movie::where('directorId', $_director->id)->get();
                 $payload[$_director->id] = [
                     'name'       => $_director->name,
+                    'id'         => $_director->id,
                     'bio'        => $_director->bio,
                     'birthDate'  => $_director->birthDate,
                     'deathDate'  => $_director->deathDate,
+                    'movies' => $movies,
                     'status' => 'successful'
 
                 ];
@@ -46,6 +49,7 @@ class Director extends Model
             $payload = [];
             foreach ($directors as $_director) {
                 $payload[$_director->id] = [
+                    "id" => $_director->id,
                     'name'       => $_director->name,
                     'bio'        => $_director->bio,
                     'birthDate'  => $_director->birthDate,
@@ -56,7 +60,8 @@ class Director extends Model
         }
 
         return $payload;
-    }
+      }
+
     // Get a specific director by ID
     public static function getDirector($id) {
         $director = Director::find($id);
@@ -80,6 +85,7 @@ class Director extends Model
                 'movieName' => $movie->movieName,
                 'releaseDate' => $movie->releaseDate,
                 'studioId' => $movie->studioId,
+                'directorId' => $movie->directorId,
                 'status' => 'successful'
             ];
         }

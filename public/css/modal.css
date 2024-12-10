@@ -9,15 +9,17 @@
 }
 .sign-in-form, .register-form {
     
-    width: 80%;
+    width: 30%;
+    height: 50%;
     aspect-ratio: 3/2;
-    background-color: white;
+    background-color: rgba(255, 255, 255);
     opacity: 1;
 display: flex;
 align-items: center;
 justify-content: center;
 position: relative;
 flex-direction: column;
+    border-radius: 20px;
 }
 .sign-in-form *:not(.X), .register-form *:not(.X) { 
     margin:10px;
@@ -26,15 +28,19 @@ flex-direction: column;
 }
 .X {
     position: absolute;
-    top:0px;
+    top:5px;
+    margin: 5px;
     right:20px;
-    font-size: 32px;
+    height:16px;
+    width:16px;
     cursor: pointer;
 }
 #sign-in-button, #register-button {
     cursor: pointer;
     height:40px;
-    background-color: #729B79;
+    background-color: #1C3D6C;
+    color:#FFFFFF;
     border: none;
     border-radius: 10px;
 }
+

@@ -26,7 +26,7 @@
        <div class="center">
         
         <input type="text" id="search-input" name="q" placeholder="Enter Movie Name...">
-        <a href="#search" class="link" id="search">Search for movie</a>
+        <a href="#search" class="link" id="search" style="inline-block; padding 10px 20px; font-size: 16px; color: #000000; text-decoration: none; border-radius: 5px; cursor: pointer">Search</a>
     
        </div>
        <div class="right">

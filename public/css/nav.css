@@ -3,7 +3,7 @@ nav {
     height:50px;
     display: flex;
     justify-content: space-between;
-    background-color: #2E2C2F;
+    background-color: #D3D3D3;
     align-items: center;
 }
 .left {
@@ -15,7 +15,7 @@ nav * {
 }
 nav a {
     text-decoration: none;
-    color:#f3e8ee;
+    color:#000000;
 }
 .btn {
     cursor: pointer;
