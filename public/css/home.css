@@ -21,3 +21,17 @@
     text-shadow: 2px 2px 3px rgba(240, 240, 240, 0.2),
                  -2px -2px 3px rgba(240, 240, 240, 0.2);
 }
+
+.header h1{
+    text-align: center;
+}
+
+.founding-date{
+    font-size: 16px;
+    margin-top: 10px
+}
+
+.card .description {
+    font-size: 14px;
+    margin: 10px;
+}

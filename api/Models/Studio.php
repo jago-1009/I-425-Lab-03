@@ -26,18 +26,12 @@ class Studio extends Model
         return $payload;
     }
     public static function getStudio($id) {
-        $studio = self::find($id);
-        $payload = [
-            'id' => $studio->id,
-            'name' => $studio->name,
-            'description' => $studio->description,
-            'foundingDate' => $studio->foundingDate
-        ];
-        return $payload;
+        return self::find($id);
     }
+
     public static function createStudio($params) {
         $studio = new Studio();
-        $studio->studioName = $params['studioName'];
+        $studio->name = $params['name'];
         $studio->description = $params['description'];
         $studio->foundingDate = $params['foundingDate'];
         $studio->save();
@@ -47,13 +41,35 @@ class Studio extends Model
         foreach ($params as $field => $value) {
             $entry->$field = $value;
         }
-        $entry->save();
+        try {
+            $entry->save();
+        } catch (\Exception $e) {
+            error_log('Save failed: ' . $e->getMessage());
+        }
         return $entry;
     }
-    public static function deleteStudio($id) {
-        $studio = self::find($id);
-        $studio->delete();
-        return $studio;
+    public static function deleteStudio($studio)
+    {
+        error_log('Received Studio for deletion: ' . print_r($studio, true));
+
+        if (!$studio instanceof self) {
+            $studio = self::find($studio->id);
+        }
+
+        if (!$studio) {
+            error_log('Studio not found during deletion.');
+            return false;
+        }
+
+        try {
+            $studio->delete();
+            error_log('Studio deleted: ' . $studio->id);
+            return true;
+        } catch (Exception $e) {
+            error_log('Error during deletion: ' . $e->getMessage());
+            return false;
+        }
     }
+
 
 }

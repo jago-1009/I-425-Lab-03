@@ -1,8 +1,8 @@
-let apiURL = "http://localhost:8000/api";
+const apiURL = "http://localhost:8000/api";
 
 function initListeners() {
     let token = sessionStorage.getItem("token");
-
+    console.log(token);
   $(".link").on("click", function (e) {
     e.preventDefault();
     let href = $(this).attr("href");
@@ -35,9 +35,7 @@ function initListeners() {
                 }
               }
 
-              cardsHTML += "</div>"; // Close the .cards div
-
-              // Insert the generated HTML into the app container
+              cardsHTML += "</div>";
               $("#app").html(cardsHTML);
             },
             error: function (error) {
@@ -193,10 +191,191 @@ function initListeners() {
 
 
             break;
-      case "studios":
-        $(".header").html(`<h1>Studios</h1>`);
-        break;
-      case "genres":
+        case "studios":
+            $(".header").html(`
+        <h1 style="background-color: #D3D3D3">Studios</h1>
+        <div class="sort-buttons" style="background-color: #D3D3D3">
+            <button id="add-studio-btn">Add Studio</button>
+            <button class="sort-btn" data-sort-by="name" data-order="ASC">Sort by Name (A-Z)</button>
+            <button class="sort-btn" data-sort-by="name" data-order="DESC">Sort by Name (Z-A)</button>
+            <button class="pagination-btn" id="previous-page-btn" style="display: none;">Previous Page</button>
+            <button class="pagination-btn" id="next-page-btn">Next Page</button>
+        </div>
+        <div id="add-studio-form" style="display: none; margin: 10px 0;">
+            <input id="new-studio-name" placeholder="Studio Name" />
+            <input id="new-studio-founding-date" placeholder="Founding Date (YYYY-MM-DD)" />
+            <textarea id="new-studio-description" placeholder="Description"></textarea>
+            <button id="save-new-studio-btn">Save</button>
+            <button id="cancel-new-studio-btn">Cancel</button>
+        </div>
+    `);
+
+            const studioUrl = apiURL + "/studios";
+            let studioCurrentPage = 1;
+            const studioResultsPerPage = 3;
+
+        function checkFetch(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response;
+        }
+
+        async function fetchAndDisplayStudios(sortBy, order) {
+            if (token) {
+                try {
+                    const response = await axios.get(studioUrl, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+                    let studios = Object.values(response.data);
+
+                    // Sort studios
+                    studios.sort((a, b) => order === "ASC"
+                        ? (a[sortBy] > b[sortBy] ? 1 : -1)
+                        : (a[sortBy] < b[sortBy] ? 1 : -1)
+                    );
+
+                    // Pagination
+                    const start = (studioCurrentPage - 1) * studioResultsPerPage;
+                    const end = start + studioResultsPerPage;
+                    const paginatedStudios = studios.slice(start, end);
+
+                    let cardsHTML = '<div class="cards">';
+                    for (const studio of paginatedStudios) {
+                        cardsHTML += `
+                        <div class="card" id="studio-card-${studio.id}">
+                            <div class="title" id="studio-name-${studio.id}">${studio.name}</div>
+                            <div class="founding-date" id="studio-founding-date-${studio.id}">
+                                Founded On: ${studio.foundingDate || "N/A"}
+                            </div>
+                            <div class="description" id="studio-description-${studio.id}">
+                                ${studio.description || "No description available."}
+                            </div>
+                            <div class="actions">
+                                <button class="edit-btn" data-id="${studio.id}" data-editing="false">Edit</button>
+                                <button class="delete-btn" data-id="${studio.id}">Delete</button>
+                            </div>
+                        </div>`;
+                    }
+                    cardsHTML += "</div>";
+
+                    $("#app").html(cardsHTML);
+
+                    $("#previous-page-btn").toggle(studioCurrentPage > 1);
+                    $("#next-page-btn").toggle(studios.length > studioCurrentPage * studioResultsPerPage);
+
+                    $(".edit-btn").on("click", function () {
+                        toggleEditMode($(this).data("id"), $(this));
+                    });
+
+                    $(".delete-btn").on("click", function () {
+                        deleteStudio($(this).data("id"));
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching studios:', error);
+                }
+            }
+        }
+
+        function addNewStudio() {
+            const data = {
+                name: $("#new-studio-name").val().trim(),
+                foundingDate: $("#new-studio-founding-date").val().trim(),
+                description: $("#new-studio-description").val().trim()
+            };
+
+            fetch(studioUrl, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(checkFetch)
+                .then(() => fetchAndDisplayStudios("name", "ASC"))
+                .catch(err => console.error("Error adding studio:", err));
+        }
+
+        function toggleEditMode(id, button) {
+            const isEditing = button.attr("data-editing") === "true";
+            if (isEditing) {
+                editStudio(id);
+                button.attr("data-editing", "false").text("Edit");
+                $(`#studio-name-${id}, #studio-founding-date-${id}, #studio-description-${id}`).attr("contenteditable", "false");
+            } else {
+                button.attr("data-editing", "true").text("Update");
+                $(`#studio-name-${id}, #studio-founding-date-${id}, #studio-description-${id}`).attr("contenteditable", "true");
+            }
+        }
+
+        function editStudio(id) {
+            const data = {
+                name: $(`#studio-name-${id}`).text().trim(),
+                foundingDate: $(`#studio-founding-date-${id}`).text().replace("Founded On: ", "").trim(),
+                description: $(`#studio-description-${id}`).text().trim()
+            };
+
+            fetch(`${studioUrl}/${id}`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(checkFetch)
+                .then(() => fetchAndDisplayStudios("name", "ASC"))
+                .catch(error => console.error("Error updating studio:", error));
+        }
+
+        function deleteStudio(id) {
+            fetch(`${studioUrl}/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(checkFetch)
+                .then(() => fetchAndDisplayStudios("name", "ASC"))
+                .catch(error => console.error("Error deleting studio:", error));
+        }
+
+            // Initialize
+            fetchAndDisplayStudios("name", "ASC");
+
+            $("#add-studio-btn").on("click", () => $("#add-studio-form").show());
+            $("#save-new-studio-btn").on("click", () => {
+                addNewStudio();
+                $("#add-studio-form").hide();
+                $("#new-studio-name, #new-studio-founding-date, #new-studio-description").val("");
+            });
+            $("#cancel-new-studio-btn").on("click", () => {
+                $("#add-studio-form").hide();
+                $("#new-studio-name, #new-studio-founding-date, #new-studio-description").val("");
+            });
+
+            $(".sort-btn").on("click", function () {
+                studioCurrentPage = 1;
+                fetchAndDisplayStudios($(this).data("sort-by"), $(this).data("order"));
+            });
+
+            $("#next-page-btn").on("click", () => {
+                studioCurrentPage++;
+                fetchAndDisplayStudios("name", "ASC");
+            });
+
+            $("#previous-page-btn").on("click", () => {
+                if (studioCurrentPage > 1) {
+                    studioCurrentPage--;
+                    fetchAndDisplayStudios("name", "ASC");
+                }
+            });
+
+            break;
+
+
+        case "genres":
         $(".header").html(`<h1>Genres</h1>`);
         break;
       case "reviews":

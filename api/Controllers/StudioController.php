@@ -48,14 +48,6 @@ class StudioController
 
     public function create(Request $request, Response $response)
     {
-        $validation = Validator::validateUser($request);
-        if (!$validation) {
-            $results = [
-                'status' => 'failed',
-                'errors' => Validator::getErrors()
-            ];
-            return $response->withStatus(500)->withJson($results);
-        }
         $params = $request->getParsedBody();
         $studio = Studio::createStudio($params);
         if ($studio->id) {
@@ -72,14 +64,6 @@ class StudioController
 
     public function update(Request $request, Response $response, $args)
     {
-        $validation = Validator::validateUser($request);
-        if (!$validation) {
-            $results = [
-                'status' => 'failed',
-                'errors' => Validator::getErrors()
-            ];
-            return $response->withStatus(500)->withJson($results);
-        }
         $id = $args['id'];
         $entry = Studio::getStudio($id);
         $params = $request->getParsedBody();
@@ -96,26 +80,26 @@ class StudioController
         }
     }
 
-    public function delete(Request $request, Response $response, $args)
+    public function delete($request, $response, $args)
     {
-        $validation = Validator::validateUser($request);
-        if (!$validation) {
-            $results = [
-                'status' => 'failed',
-                'errors' => Validator::getErrors()
-            ];
-            return $response->withStatus(500)->withJson($results);
-        }
-        $id = $args['id'];
-        $studio = Studio::getStudio($id);
+        $studioId = $args['id'];
+
+        $studio = Studio::find($studioId);
+
         if (!$studio) {
-            return $response->withStatus(404);
+            error_log('Studio not found with ID: ' . $studioId);
+            return $response->withStatus(404)->write('Studio not found.');
         }
-        $result = Studio::deleteStudio($studio);
-        if ($result) {
+
+
+        try {
+            Studio::deleteStudio($studio);
+            error_log('Studio deleted successfully: ' . $studioId);
             return $response->withStatus(204);
-        } else {
-            return $response->withStatus(500);
+        } catch (Exception $e) {
+            error_log('Error deleting studio: ' . $e->getMessage());
+            return $response->withStatus(500)->write('Failed to delete studio.');
         }
     }
+
 }
